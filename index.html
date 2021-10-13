@@ -24,8 +24,8 @@
 		}
 	</style>
 	<script>
-		const baseUrl = "https://merchant.intergiro.com/v1"
-		const key = "Bearer <insert-public-api-key>"
+		const baseUrl = "http://localhost:7100"
+		const key = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjcwNzEiLCJpYXQiOjE2MjAwNDg1MjEsIm5hbWUiOiJ0ZXN0dGVzdCIsInVybCI6Ind3dy5leGFtcGxlLmNvbSIsImVtYWlsIjoiM0g1aFNGNG1mYnd4TzhHZXVmNjREOUl3aFJhQ0tJa3dMaEVxRGE2dzFfZ1dhRjFWa3VuaDlHczRuQUpBWDI1dV9YdXk2U0xNdy1JUmtTWHBFamJEZjJkcExYbDRNM0JyTlhCRGRVRWlMQ0p1YjNScFpua2lPaUlpZlEiLCJjYXJkIjp7ImFjcXVpcmVyIjoiakVkUXk0aXZOTVY0NTBfbHpJOGNnbEZjYWgwTF83cDVpbUtjZlowcU5nVmZqUmRvejRpWjl1WldjNTZyTUloTXNsVGQwQkQ4cG0xZHdmTVkzRmljcXlKd2NtOTBiMk52YkNJNkltbHVkR1Z5WjJseWJ5SXNJblZ5YkNJNkltaDBkSEE2THk5c2IyTmhiR2h2YzNRNk56RXdNQ0o5IiwiY291bnRyeSI6IlNFIiwiZGVzY3JpcHRvciI6InRlc3QgdHJhbnNhY3Rpb24iLCJlbXYzZCI6Ikw2NVNBVVEyOHV3YVBKdGlaclAxU000Skk2b29Fd1pfRWN5VURqNDBDQW11RDdoS01mT1RMWHlVMDJ0c3F0dDRQczhkemIyRmNaVElaX2VJeWhGUjFTSXNJblZ5YkNJNkltaDBkSEJ6T2k4dmMyVnlkbWxqWlM1ellXNWtZbTk0TGpOa2MyVmpkWEpsTG1sdkluMHNleUp3Y205MGIyTnZiQ0k2SW1Ob00yUXhJaXdpZFhKc0lqb2lhSFIwY0hNNkx5OWhjR2t1WTJGeVpHWjFibU11WTI5dEwyTm9NMlF4YzJsdElpd2lhMlY1SWpvaWJtOHRhMlY1SW4xZCIsImlkIjoidGVzdCIsIm1jYyI6IjEyMzQiLCJtaWQiOiI4MTAzMDAwMTExIiwidXJsIjoiaHR0cDovL2xvY2FsaG9zdDo3MTAwIn0sInN1YiI6InRlc3R0ZXN0IiwiYWdlbnQiOiJ0ZXN0dGVzdCIsImF1ZCI6InB1YmxpYyIsImZlYXR1cmVzIjoiIn0.Lc0jmuWdQBnJbMPbm3SfJWrXugZJBap8SDyMA8xWgNE"
 
 		let authorization
 		function submit() {
@@ -63,13 +63,15 @@
 			}
 		}
 		async function verify() {
-			const [status, body] = await post(baseUrl + "/verification", key, {
+			const [status, body] = await post(baseUrl + "/verification?method=GET", key, {
 				items: authorization.amount,
 				number: authorization.number,
 				currency: authorization.currency,
 				card: authorization.card,
-				browser: { parent: window.location.origin }
+				target: baseUrl+"/verification/test"
+				//browser: { parent: window.location.origin }
 			})
+
 			const iframe = document.getElementById("verification")
 			switch (status) {
 				case 201:
@@ -115,7 +117,7 @@
 </head>
 
 <body style="width: 100%; max-width: 20em; margin-left: auto; margin-right: auto;">
-	<iframe id="verification" class="hidden"></iframe>
+	<iframe id="verification"></iframe>
 	<form method="post">
 		<label for="pan">PAN</label>
 		<input type="text" id="pan" name="pan" value="4111111111111111" />
