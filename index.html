@@ -1,134 +1,164 @@
 <!DOCTYPE html>
-<html>
-
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
-	<meta http-equiv="x-ua-compatible" content="IE=Edge">
-	<title>Verification Example</title>
-	<style>
-		iframe.hidden {
-			display: none;
-		}
-
-		iframe.visible {
-			border: none;
-			height: 70vh;
-			width: 90vw;
-			max-width: 40em;
-			outline: 1px solid red;
-		}
-
-		input {
-			display: block;
-		}
-	</style>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<title></title>
+		<style>
+		body {
+      position: relative;
+    }
+    div {
+      margin: auto;
+      stroke: black;
+      overflow: visible;
+      width: 100%;
+          height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+			position: absolute;
+			z-index: 1;
+    }
+    span {
+      font-family: Arial;
+      font-size: 1.5em;
+    }
+    svg {
+      animation: SPIN-SVG 1.4s linear infinite;
+      width: 4em;
+      height: 4em;
+			margin: auto;
+      transform: translateY(-50%);
+    }
+    svg circle {
+      transform-origin: center;
+      animation: SPIN-CIRCLE 1.4s ease-in-out infinite;
+      stroke-dasharray: 187;
+            stroke-dashoffset: 0;
+            stroke-linecap: square;
+            stroke-width: 6;
+    }
+    @keyframes SPIN-SVG {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(270deg);
+        }
+    }
+    @keyframes SPIN-CIRCLE {
+      0% {
+        stroke-dashoffset: 187;
+      }
+      50% {
+        stroke-dashoffset: 46.75;
+        transform: rotate(135deg);
+      }
+      100% {
+        stroke-dashoffset: 187;
+        transform: rotate(450deg);
+      }
+    }
+  </style>
+	</head>
 	<script>
-		const baseUrl = "http://localhost:7100"
-		const key = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjcwNzEiLCJpYXQiOjE2MjAwNDg1MjEsIm5hbWUiOiJ0ZXN0dGVzdCIsInVybCI6Ind3dy5leGFtcGxlLmNvbSIsImVtYWlsIjoiM0g1aFNGNG1mYnd4TzhHZXVmNjREOUl3aFJhQ0tJa3dMaEVxRGE2dzFfZ1dhRjFWa3VuaDlHczRuQUpBWDI1dV9YdXk2U0xNdy1JUmtTWHBFamJEZjJkcExYbDRNM0JyTlhCRGRVRWlMQ0p1YjNScFpua2lPaUlpZlEiLCJjYXJkIjp7ImFjcXVpcmVyIjoiakVkUXk0aXZOTVY0NTBfbHpJOGNnbEZjYWgwTF83cDVpbUtjZlowcU5nVmZqUmRvejRpWjl1WldjNTZyTUloTXNsVGQwQkQ4cG0xZHdmTVkzRmljcXlKd2NtOTBiMk52YkNJNkltbHVkR1Z5WjJseWJ5SXNJblZ5YkNJNkltaDBkSEE2THk5c2IyTmhiR2h2YzNRNk56RXdNQ0o5IiwiY291bnRyeSI6IlNFIiwiZGVzY3JpcHRvciI6InRlc3QgdHJhbnNhY3Rpb24iLCJlbXYzZCI6Ikw2NVNBVVEyOHV3YVBKdGlaclAxU000Skk2b29Fd1pfRWN5VURqNDBDQW11RDdoS01mT1RMWHlVMDJ0c3F0dDRQczhkemIyRmNaVElaX2VJeWhGUjFTSXNJblZ5YkNJNkltaDBkSEJ6T2k4dmMyVnlkbWxqWlM1ellXNWtZbTk0TGpOa2MyVmpkWEpsTG1sdkluMHNleUp3Y205MGIyTnZiQ0k2SW1Ob00yUXhJaXdpZFhKc0lqb2lhSFIwY0hNNkx5OWhjR2t1WTJGeVpHWjFibU11WTI5dEwyTm9NMlF4YzJsdElpd2lhMlY1SWpvaWJtOHRhMlY1SW4xZCIsImlkIjoidGVzdCIsIm1jYyI6IjEyMzQiLCJtaWQiOiI4MTAzMDAwMTExIiwidXJsIjoiaHR0cDovL2xvY2FsaG9zdDo3MTAwIn0sInN1YiI6InRlc3R0ZXN0IiwiYWdlbnQiOiJ0ZXN0dGVzdCIsImF1ZCI6InB1YmxpYyIsImZlYXR1cmVzIjoiIn0.Lc0jmuWdQBnJbMPbm3SfJWrXugZJBap8SDyMA8xWgNE"
-
-		let authorization
-		function submit() {
-			authorization = {
-				"number": "Number",
-				"amount": Number(document.getElementById("amount").value),
-				"currency": "EUR",
-				"card": {
-					"pan": document.getElementById("pan").value,
-					"expires": [
-						Number(document.getElementById("expires").value.split("/")[0]),
-						Number(document.getElementById("expires").value.split("/")[1])
-					],
-					"csc": document.getElementById("csc").value
+	const baseUrl = "http://localhost:7100";
+	let verificationCreatable = {"number":"56375613056","card":{"pan":"4111111111111111","expires":[2,22],"csc":"987"},"currency":"EUR","items":260,"target":"https://ptsv2.com/t/el9s9-1634228443/post"};
+	let authorizationCreatable = {"number":"56375613056","amount":260,"currency":"EUR","card":{"pan":"4111111111111111","expires":[2,22],"csc":"987"}};
+	const key = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjcwNzEiLCJpYXQiOjE2MjAwNDg1MjEsIm5hbWUiOiJ0ZXN0dGVzdCIsInVybCI6Ind3dy5leGFtcGxlLmNvbSIsImVtYWlsIjoiM0g1aFNGNG1mYnd4TzhHZXVmNjREOUl3aFJhQ0tJa3dMaEVxRGE2dzFfZ1dhRjFWa3VuaDlHczRuQUpBWDI1dV9YdXk2U0xNdy1JUmtTWHBFamJEZjJkcExYbDRNM0JyTlhCRGRVRWlMQ0p1YjNScFpua2lPaUlpZlEiLCJjYXJkIjp7ImFjcXVpcmVyIjoiakVkUXk0aXZOTVY0NTBfbHpJOGNnbEZjYWgwTF83cDVpbUtjZlowcU5nVmZqUmRvejRpWjl1WldjNTZyTUloTXNsVGQwQkQ4cG0xZHdmTVkzRmljcXlKd2NtOTBiMk52YkNJNkltbHVkR1Z5WjJseWJ5SXNJblZ5YkNJNkltaDBkSEE2THk5c2IyTmhiR2h2YzNRNk56RXdNQ0o5IiwiY291bnRyeSI6IlNFIiwiZGVzY3JpcHRvciI6InRlc3QgdHJhbnNhY3Rpb24iLCJlbXYzZCI6Ikw2NVNBVVEyOHV3YVBKdGlaclAxU000Skk2b29Fd1pfRWN5VURqNDBDQW11RDdoS01mT1RMWHlVMDJ0c3F0dDRQczhkemIyRmNaVElaX2VJeWhGUjFTSXNJblZ5YkNJNkltaDBkSEJ6T2k4dmMyVnlkbWxqWlM1ellXNWtZbTk0TGpOa2MyVmpkWEpsTG1sdkluMHNleUp3Y205MGIyTnZiQ0k2SW1Ob00yUXhJaXdpZFhKc0lqb2lhSFIwY0hNNkx5OWhjR2t1WTJGeVpHWjFibU11WTI5dEwyTm9NMlF4YzJsdElpd2lhMlY1SWpvaWJtOHRhMlY1SW4xZCIsImlkIjoidGVzdCIsIm1jYyI6IjEyMzQiLCJtaWQiOiI4MTAzMDAwMTExIiwidXJsIjoiaHR0cDovL2xvY2FsaG9zdDo3MTAwIn0sInN1YiI6InRlc3R0ZXN0IiwiYWdlbnQiOiJ0ZXN0dGVzdCIsImF1ZCI6InB1YmxpYyIsImZlYXR1cmVzIjoiIn0.Lc0jmuWdQBnJbMPbm3SfJWrXugZJBap8SDyMA8xWgNE";
+	authorize()
+	
+	async function authorize() {
+		const [status, body] = await post(baseUrl + "/authorization", authorizationCreatable);
+		switch(status) {
+			case 200: 
+			case 201: 
+				// success 
+				submit(body)
+				break;
+			case 400:
+				if (body.error == "verification required") {
+					const verification = body;
+					await verify(verification);
+				} else {
+					// failed
+					submit(body)
 				}
-			}
-
-			authorize()
 		}
-		async function authorize() {
-			const [status, body] = await post(baseUrl + "/authorization", key, authorization)
-			switch (status) {
-				case 200:
-					alert("success: " + JSON.stringify(body, undefined, 2))
-					break
-				case 400:
-					if (body.error == "verification required")
-						verify(authorization)
-					else
-						alert("failed: " + JSON.stringify(body))
-					break
-				default:
-					alert("failed: " + JSON.stringify(body))
-					break
-			}
-		}
+	}
+	
+	
 		async function verify() {
-			const [status, body] = await post(baseUrl + "/verification?method=GET", key, {
-				items: authorization.amount,
-				number: authorization.number,
-				currency: authorization.currency,
-				card: authorization.card,
-				target: baseUrl+"/verification/test"
-				//browser: { parent: window.location.origin }
-			})
-
+			const creatable = { ...verificationCreatable, browser: { parent: window.location.origin } }
+			delete creatable.target
+			const [status, body] = await post(baseUrl+ "/verification?method=GET", creatable)
 			const iframe = document.getElementById("verification")
 			switch (status) {
 				case 201:
-					authorization.card.verification = body
-					iframe.classList.remove("visible")
-					iframe.classList.add("hidden")
+					authorizationCreatable.card.verification = body
 					await authorize()
 					break
 				case 400:
-					if (body.error == "verification required" && body.content.details.method == "GET") {
-						iframe.classList.replace("hidden", body.content.details.visible ? "visible" : "hidden")
+					if (body.error == "verification required" && body.content.details.method == "GET"){
 						iframe.src = body.content.details.url
-					} else
-						alert("failed: " + JSON.stringify(body))
+						document.getElementById("spinner").style.display = "none"
+					}
+					else 
+						submit(body)
 					break
 				default:
-					alert("failed: " + JSON.stringify(body))
+					submit(body)
 					break
 			}
 		}
-		window.addEventListener("message", async e => {
-			if (e.data.destination == "parent" && e.data.content.name == "card") {
-				const iframe = document.getElementById("verification")
-				iframe.class = "hidden"
-				authorization.card.verification = JSON.parse(e.data.content.value)
-				await verify()
-			}
-		})
-		async function post(url, key, body) {
-			const response = await fetch(url, {
-				method: "POST",
-				headers: new Headers(
-					{
-						Authorization: key,
-						"Content-Type": "application/json"
-					}),
-				body: JSON.stringify(body),
-			}
-			)
-			return [response.status, response.headers.get("Content-Type")?.startsWith("application/json") ? await response.json() : await response.text()]
+	
+	
+	async function post(url, body) {
+		const response = await fetch(url, {
+			method: "POST",
+			headers: new Headers(
+				{
+					Authorization: key,
+					"Content-Type": "application/json"
+				}),
+			body: JSON.stringify(body),
+		});
+		return [
+			response.status, 
+			response.headers.get("Content-Type")?.startsWith("application/json") 
+				? await response.json() 
+				: await response.text()
+		];
+	}
+	
+	function submit(body) {
+		const input = document.getElementById("result")
+		input.value = JSON.stringify(body)
+		const form = document.getElementById("returnForm")
+		form.submit()
+	}
+		
+	window.addEventListener("message", async e => {
+		if (e.data.destination == "parent" && e.data.content.name == "card") {
+			verificationCreatable.card.verification = JSON.parse(e.data.content.value)
+			if(verificationCreatable.card.verification.type == "challenge")
+			document.getElementById("spinner").style.display = "flex"
+			await verify()
 		}
+	})
 	</script>
-</head>
+	<body style="height:90vh; width:90vw; margin:auto;">
+	<div id="spinner">
+		<svg class="spinner" width="44px" height="44px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+				<circle class="path" fill="none" cx="33" cy="33" r="30"></circle>
+		</svg>
+	</div>
 
-<body style="width: 100%; max-width: 20em; margin-left: auto; margin-right: auto;">
-	<iframe id="verification"></iframe>
-	<form method="post">
-		<label for="pan">PAN</label>
-		<input type="text" id="pan" name="pan" value="4111111111111111" />
-		<label for="csc">CSC</label>
-		<input type="text" id="csc" name="csc" value="987" />
-		<label for="expires">Expires</label>
-		<input type="text" id="expires" name="expires" placeholder="MM/YY" value="2/22" />
-		<label for="amount">Amount</label>
-		<input type="text" id="amount" name="amount" value="250" />
+	<iframe name="verification" id="verification" style="position:relative; z-index:2; width:100%; height:100%; border:none; box-sizing: border-box;"></iframe>
+	<form method="post" id="returnForm" action="https://ptsv2.com/t/el9s9-1634228443/post" target="_self">
+		<input type="hidden" id="result" name="result"></input>
 	</form>
-	<button onclick="submit()">Submit</button>
-</body>
-
+	</body>
 </html>
