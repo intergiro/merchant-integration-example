@@ -24,8 +24,8 @@
 		}
 	</style>
 	<script>
-		const baseUrl = "https://merchant.intergiro.com/v1"
-		const key = "Bearer <insert-public-api-key>"
+		const baseUrl = "http://localhost:7100"
+		const key = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjcwNzEiLCJpYXQiOjE2MjAwNDg1MjEsIm5hbWUiOiJ0ZXN0dGVzdCIsInVybCI6Ind3dy5leGFtcGxlLmNvbSIsImVtYWlsIjoiM0g1aFNGNG1mYnd4TzhHZXVmNjREOUl3aFJhQ0tJa3dMaEVxRGE2dzFfZ1dhRjFWa3VuaDlHczRuQUpBWDI1dV9YdXk2U0xNdy1JUmtTWHBFamJEZjJkcExYbDRNM0JyTlhCRGRVRWlMQ0p1YjNScFpua2lPaUlpZlEiLCJjYXJkIjp7ImFjcXVpcmVyIjoiakVkUXk0aXZOTVY0NTBfbHpJOGNnbEZjYWgwTF83cDVpbUtjZlowcU5nVmZqUmRvejRpWjl1WldjNTZyTUloTXNsVGQwQkQ4cG0xZHdmTVkzRmljcXlKd2NtOTBiMk52YkNJNkltbHVkR1Z5WjJseWJ5SXNJblZ5YkNJNkltaDBkSEE2THk5c2IyTmhiR2h2YzNRNk56RXdNQ0o5IiwiY291bnRyeSI6IlNFIiwiZGVzY3JpcHRvciI6InRlc3QgdHJhbnNhY3Rpb24iLCJlbXYzZCI6Ikw2NVNBVVEyOHV3YVBKdGlaclAxU000Skk2b29Fd1pfRWN5VURqNDBDQW11RDdoS01mT1RMWHlVMDJ0c3F0dDRQczhkemIyRmNaVElaX2VJeWhGUjFTSXNJblZ5YkNJNkltaDBkSEJ6T2k4dmMyVnlkbWxqWlM1ellXNWtZbTk0TGpOa2MyVmpkWEpsTG1sdkluMHNleUp3Y205MGIyTnZiQ0k2SW1Ob00yUXhJaXdpZFhKc0lqb2lhSFIwY0hNNkx5OWhjR2t1WTJGeVpHWjFibU11WTI5dEwyTm9NMlF4YzJsdElpd2lhMlY1SWpvaWJtOHRhMlY1SW4xZCIsImlkIjoidGVzdCIsIm1jYyI6IjEyMzQiLCJtaWQiOiI4MTAzMDAwMTExIiwidXJsIjoiaHR0cDovL2xvY2FsaG9zdDo3MTAwIn0sInN1YiI6InRlc3R0ZXN0IiwiYWdlbnQiOiJ0ZXN0dGVzdCIsImF1ZCI6InB1YmxpYyIsImZlYXR1cmVzIjoiIn0.Lc0jmuWdQBnJbMPbm3SfJWrXugZJBap8SDyMA8xWgNE"
 
 		let authorization
 		function submit() {
@@ -33,14 +33,7 @@
 				"number": "Number",
 				"amount": Number(document.getElementById("amount").value),
 				"currency": "EUR",
-				"card": {
-					"pan": document.getElementById("pan").value,
-					"expires": [
-						Number(document.getElementById("expires").value.split("/")[0]),
-						Number(document.getElementById("expires").value.split("/")[1])
-					],
-					"csc": document.getElementById("csc").value
-				}
+				"card": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjYXJkIiwiaWF0IjoxNjM0MzA3MTQ1LCJhdWQiOiJkZXZlbG9wbWVudCIsImVuYyI6IjEyLlA1MmZDMEE5SzNuVzM5ekdqNFgxLVEuSmtHUXROQnFNMVpKZHk2VVZmaC1Rem5vcTR4ZDdnV3Nsa1JrQjFhc2NOLUZQNkhWIiwieHByIjpbIjEyIiwiMzAiXX0.i6k9pUlQcKxqIRSW1BsgtzQB-0lyGmd9F0Z1Y7WyaoJRGTL1fA5KI7WFE5jGMYeRVAKCSF5ormw1gE4xeZ3Y3-sqRzsVhywyfLBayP50rIYV6hgru0NaECwZjwReQvM__Vrj4G7r2wRER9hpSnQtuxIgWJr6aA0Dw-tLjgYeJkTLpTkhXlTvEKZk5VG3om5GPo_ZVIXC9nbZqsM9pHb5gy75AmYW9osq2snJ2TpAN-co-Kt3peWoTW0pc3FnoreQ_eeyn22Vjk2J43OPBDk5azMCRS_GAcmGSOjToWYXwmUDUjCY2PemAQiNFtgRrn7IdiHPisLKdcJBzzXWlOUjJQ"
 			}
 
 			authorize()
@@ -63,12 +56,13 @@
 			}
 		}
 		async function verify() {
-			const [status, body] = await post(baseUrl + "/verification", key, {
+			const [status, body] = await post(baseUrl + "/verification?method=GET", key, {
 				items: authorization.amount,
 				number: authorization.number,
 				currency: authorization.currency,
 				card: authorization.card,
-				browser: { parent: window.location.origin }
+				target: "https://ptsv2.com/t/2wuz6-1634303028/post"
+				//browser: { parent: window.location.origin }
 			})
 			const iframe = document.getElementById("verification")
 			switch (status) {
@@ -91,12 +85,20 @@
 			}
 		}
 		window.addEventListener("message", async e => {
-			if (e.data.destination == "parent" && e.data.content.name == "card") {
+			if (e.data.destination == "parent") {
+				if(e.data.content.name == "card") {
+					console.log("hej card", e.data.content.value)
+					authorization.card = e.data.content.value
+				} 
+				else if(e.data.content.name == "verification") {
+					console.log("hej verification", e.data.content.value)
+					authorization.card.verification = JSON.parse(e.data.content.value)
+				}
 				const iframe = document.getElementById("verification")
 				iframe.class = "hidden"
-				authorization.card.verification = JSON.parse(e.data.content.value)
 				await verify()
 			}
+			
 		})
 		async function post(url, key, body) {
 			const response = await fetch(url, {
