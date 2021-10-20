@@ -7,9 +7,9 @@
 	<meta http-equiv="x-ua-compatible" content="IE=Edge">
 	<title>Verification Example</title>
 	<style>
-		iframe.hidden {
+		/* iframe.hidden {
 			display: none;
-		}
+		} */
 
 		iframe.visible {
 			border: none;
@@ -26,28 +26,84 @@
 	<script>
 		const baseUrl = "http://localhost:7100"
 		const key = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjcwNzEiLCJpYXQiOjE2MjAwNDg1MjEsIm5hbWUiOiJ0ZXN0dGVzdCIsInVybCI6Ind3dy5leGFtcGxlLmNvbSIsImVtYWlsIjoiM0g1aFNGNG1mYnd4TzhHZXVmNjREOUl3aFJhQ0tJa3dMaEVxRGE2dzFfZ1dhRjFWa3VuaDlHczRuQUpBWDI1dV9YdXk2U0xNdy1JUmtTWHBFamJEZjJkcExYbDRNM0JyTlhCRGRVRWlMQ0p1YjNScFpua2lPaUlpZlEiLCJjYXJkIjp7ImFjcXVpcmVyIjoiakVkUXk0aXZOTVY0NTBfbHpJOGNnbEZjYWgwTF83cDVpbUtjZlowcU5nVmZqUmRvejRpWjl1WldjNTZyTUloTXNsVGQwQkQ4cG0xZHdmTVkzRmljcXlKd2NtOTBiMk52YkNJNkltbHVkR1Z5WjJseWJ5SXNJblZ5YkNJNkltaDBkSEE2THk5c2IyTmhiR2h2YzNRNk56RXdNQ0o5IiwiY291bnRyeSI6IlNFIiwiZGVzY3JpcHRvciI6InRlc3QgdHJhbnNhY3Rpb24iLCJlbXYzZCI6Ikw2NVNBVVEyOHV3YVBKdGlaclAxU000Skk2b29Fd1pfRWN5VURqNDBDQW11RDdoS01mT1RMWHlVMDJ0c3F0dDRQczhkemIyRmNaVElaX2VJeWhGUjFTSXNJblZ5YkNJNkltaDBkSEJ6T2k4dmMyVnlkbWxqWlM1ellXNWtZbTk0TGpOa2MyVmpkWEpsTG1sdkluMHNleUp3Y205MGIyTnZiQ0k2SW1Ob00yUXhJaXdpZFhKc0lqb2lhSFIwY0hNNkx5OWhjR2t1WTJGeVpHWjFibU11WTI5dEwyTm9NMlF4YzJsdElpd2lhMlY1SWpvaWJtOHRhMlY1SW4xZCIsImlkIjoidGVzdCIsIm1jYyI6IjEyMzQiLCJtaWQiOiI4MTAzMDAwMTExIiwidXJsIjoiaHR0cDovL2xvY2FsaG9zdDo3MTAwIn0sInN1YiI6InRlc3R0ZXN0IiwiYWdlbnQiOiJ0ZXN0dGVzdCIsImF1ZCI6InB1YmxpYyIsImZlYXR1cmVzIjoiIn0.Lc0jmuWdQBnJbMPbm3SfJWrXugZJBap8SDyMA8xWgNE"
+		function createInput(labelText, name, value, placeholder) {
+			console.log("adding", labelText, name, value);
+			const label = document.createElement("label");
+			label.innerHTML = labelText;
+			label.for = name;
+			const input = document.createElement("input");
+			input.type = "text";
+			input.name = name;
+			input.id = name;
+			input.value = value;
+			placeholder && (input.placeholder = placeholder)
+			document.getElementById("card-form").appendChild(label);
+			document.getElementById("card-form").appendChild(input);
+		}
+		window.onload = () => {
+			createInput("Key", "key", key);
+			createInput("Number", "number", "Number");
+			createInput("Currency", "currency", "EUR");
+			// createInput("Amount", "amount", "250");
+			createInput("Pan", "pan", "4111111111111111");
+			createInput("csc", "csc", "987");
+			createInput("Expires", "expires", "2/22", "MM/YY");
+			createInput("Item Price", "items0Price", "231");
+			createInput("Item Name", "items0Name", "IPhone++");
+			createInput("Item Price", "items0Price", "1099");
+			createInput("Item Quantity", "items0Quantity", "2.3");
+			createInput("Item Unit", "items0Unit", "kg");
+			createInput("Item Quantity", "items1Name", "Some nice pants");
+			createInput("Item Price", "items1Price", "43");
+			createInput("Item Quantity", "items1Vat", "0.13");
+			createInput("Item Quantity", "items1Quantity", "1");
+			createInput("Item Unit", "items1Unit", "pairs");
+		}
 
 		let authorization
-		function submit() {
+		async function submit() {
+			/* const card = {
+				pan: document.getElementById("pan").value,
+				expires: [
+					Number(document.getElementById("expires").value.split("/")[0]),
+					Number(document.getElementById("expires").value.split("/")[1])
+				],
+				csc: document.getElementById("csc").value
+			};
+			// const [_, cardToken] = await post(baseUrl + "/card", key, card)
+			// console.log("cardToken: ", cardToken);
 			authorization = {
-				"number": "Number",
-				"amount": Number(document.getElementById("amount").value),
-				"currency": "EUR",
-				"card": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjYXJkIiwiaWF0IjoxNjM0MzA3MTQ1LCJhdWQiOiJkZXZlbG9wbWVudCIsImVuYyI6IjEyLlA1MmZDMEE5SzNuVzM5ekdqNFgxLVEuSmtHUXROQnFNMVpKZHk2VVZmaC1Rem5vcTR4ZDdnV3Nsa1JrQjFhc2NOLUZQNkhWIiwieHByIjpbIjEyIiwiMzAiXX0.i6k9pUlQcKxqIRSW1BsgtzQB-0lyGmd9F0Z1Y7WyaoJRGTL1fA5KI7WFE5jGMYeRVAKCSF5ormw1gE4xeZ3Y3-sqRzsVhywyfLBayP50rIYV6hgru0NaECwZjwReQvM__Vrj4G7r2wRER9hpSnQtuxIgWJr6aA0Dw-tLjgYeJkTLpTkhXlTvEKZk5VG3om5GPo_ZVIXC9nbZqsM9pHb5gy75AmYW9osq2snJ2TpAN-co-Kt3peWoTW0pc3FnoreQ_eeyn22Vjk2J43OPBDk5azMCRS_GAcmGSOjToWYXwmUDUjCY2PemAQiNFtgRrn7IdiHPisLKdcJBzzXWlOUjJQ"
-			}
-
-			authorize()
+				number: "Number",
+				amount: Number(document.getElementById("amount").value),
+				currency: "EUR",
+				card: card
+			} */
+			authorizeForm()
 		}
+
+		async function authorizeForm() {
+			const form = document.getElementById("card-form");
+			// const authInput = document.createElement("input");
+			// authInput.name = "Authorization";
+			// authInput.value = key;
+			// form.appendChild(authInput);
+			form.action = baseUrl + "/authorization";
+			const answer = await form.submit();
+			console.log(answer);
+		}
+
 		async function authorize() {
 			const [status, body] = await post(baseUrl + "/authorization", key, authorization)
 			switch (status) {
 				case 200:
+				case 201:
 					alert("success: " + JSON.stringify(body, undefined, 2))
 					break
 				case 400:
-					if (body.error == "verification required")
-						verify(authorization)
-					else
+					if (body.error == "verification required") {
+						console.log("Requres verification!!")
+						verify()
+					} else
 						alert("failed: " + JSON.stringify(body))
 					break
 				default:
@@ -56,18 +112,21 @@
 			}
 		}
 		async function verify() {
+			console.log("verify: Sending to toilet authorization: ", authorization);
 			const [status, body] = await post(baseUrl + "/verification?method=GET", key, {
 				items: authorization.amount,
 				number: authorization.number,
 				currency: authorization.currency,
 				card: authorization.card,
-				target: "https://ptsv2.com/t/2wuz6-1634303028/post"
-				//browser: { parent: window.location.origin }
+				target: "http://ptsv2.com/t/towsa-1634563578/post"
+				// browser: { parent: window.location.origin }
 			})
+			console.log("verify status", status);
+			console.log("verify body", body);
 			const iframe = document.getElementById("verification")
 			switch (status) {
 				case 201:
-					authorization.card.verification = body
+					typeof body == "string" ? (authorization.card = body) : (authorization.card.verification = body)
 					iframe.classList.remove("visible")
 					iframe.classList.add("hidden")
 					await authorize()
@@ -98,7 +157,6 @@
 				iframe.class = "hidden"
 				await verify()
 			}
-			
 		})
 		async function post(url, key, body) {
 			const response = await fetch(url, {
@@ -118,15 +176,15 @@
 
 <body style="width: 100%; max-width: 20em; margin-left: auto; margin-right: auto;">
 	<iframe id="verification" class="hidden"></iframe>
-	<form method="post">
-		<label for="pan">PAN</label>
+	<form method="post" id="card-form">
+		<!-- <label for="pan">PAN</label>
 		<input type="text" id="pan" name="pan" value="4111111111111111" />
 		<label for="csc">CSC</label>
 		<input type="text" id="csc" name="csc" value="987" />
 		<label for="expires">Expires</label>
 		<input type="text" id="expires" name="expires" placeholder="MM/YY" value="2/22" />
 		<label for="amount">Amount</label>
-		<input type="text" id="amount" name="amount" value="250" />
+		<input type="text" id="amount" name="amount" value="250" /> -->
 	</form>
 	<button onclick="submit()">Submit</button>
 </body>
