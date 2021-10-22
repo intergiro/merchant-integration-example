@@ -28,7 +28,7 @@
 		let authorization
 		function submit() {
 			authorization = {
-				"number": "Unique-number",
+                "number": "Unique-number",
 				"items": Number(document.getElementById("amount").value),
 				"currency": "EUR",
 				"card": {
@@ -41,7 +41,6 @@
 				},
 				browser: { parent: window.location.origin }
 			}
-
 			authorize()
 		}
 		async function authorize() {
@@ -68,14 +67,11 @@
 		}
 	
 		window.addEventListener("message", async e => {
-			if (e.data.destination == "parent") {
-				if (e.data.content.name == "card") 
-					authorization.card = e.data.content.value
-				else if (e.data.content.name == "verification") 
-					authorization.card.verification = JSON.parse(e.data.content.value)
-				const iframe = document.getElementById("verification")
-				iframe.class = "hidden"
-				await authorize()
+			if (e.data.destination == "parent" && e.data.content.name == "card") {
+				authorization.card = e.data.content.value
+            const iframe = document.getElementById("verification")
+            iframe.class = "hidden"
+            await authorize()
 			}
 
 		})
