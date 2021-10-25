@@ -45,19 +45,56 @@
 			createInput("Number", "number", "Number");
 			createInput("Currency", "currency", "EUR");
 			// createInput("Amount", "amount", "250");
-			createInput("Pan", "pan", "4111111111111111");
-			createInput("csc", "csc", "987");
-			createInput("Expires", "expires", "2/22", "MM/YY");
-			createInput("Item Price", "items0Price", "231");
-			createInput("Item Name", "items0Name", "IPhone++");
-			createInput("Item Price", "items0Price", "1099");
-			createInput("Item Quantity", "items0Quantity", "2.3");
-			createInput("Item Unit", "items0Unit", "kg");
-			createInput("Item Quantity", "items1Name", "Some nice pants");
-			createInput("Item Price", "items1Price", "43");
-			createInput("Item Quantity", "items1Vat", "0.13");
-			createInput("Item Quantity", "items1Quantity", "1");
-			createInput("Item Unit", "items1Unit", "pairs");
+			createInput("Pan", "card[pan]", "4111111111111111");
+			createInput("csc", "card[csc]", "987");
+			// createInput("Expires Month", "card[expires][0]", "2", "MM");
+			// createInput("Expires Year", "card[expires][1]", "22", "YY");
+			createInput("Expires", "card[expires]", "2/22", "MM/YY");
+
+			createInput("Item Price", "items", "231");
+
+			createInput("Browser ColorDepth", "browser[colorDepth]", "24")
+			createInput("Browser Java", "browser[java]", "false")
+			createInput("Browser Javascript", "browser[javascript]", "true")
+			createInput("Browser Timezone", "browser[timezone]", "2")
+			createInput("Browser Timezone", "browser[resolution][0]", "1000")
+			createInput("Browser Timezone", "browser[resolution][1]", "800")
+			createInput("Contact Type", "contact[type]", "person")
+			createInput("Contact IdentityNumber", "contact[identityNumber]", "199305012222")
+			createInput("Contact Id", "contact[id]", "aksdj")
+			createInput("Contact Number", "contact[number]", "number") 
+			createInput("Contact Name", "contact[name][first]", "Jane")
+			createInput("Contact Name", "contact[name][last]", "Doe")
+			createInput("Contact Address street", "contact[address][street]", "hittepågatan 7")
+			createInput("Contact Address zipCode", "contact[address][zipCode]", "76542")
+			createInput("Contact Address city", "contact[address][city]", "Uppsala")
+			createInput("Contact Address countryCode", "contact[address][countryCode]", "SE")
+			createInput("Contact Email", "contact[email]", "fake.person@gmail.com")
+			createInput("Contact Phone primary", "contact[phone][primary]", "+46123456789")
+			createInput("Contact Phone cellphone", "contact[phone][cellphone]", "+46987654321")
+
+			// createInput("Item Price", "items[price]", "231");
+			// createInput("Item Name", "items[name]", "IPhone++");
+			// createInput("Item Price", "items[price]", "1099");
+			// createInput("Item Quantity", "items[quantity]", "2.3");
+			// createInput("Item Unit", "items[unit]", "kg");
+
+			// createInput("Item Price", "items[0][price]", "231");
+			// createInput("Item Name", "items[0][name]", "IPhone++");
+			// createInput("Item Price", "items[0][price]", "1099");
+			// createInput("Item Quantity", "items[0][quantity]", "2.3");
+			// createInput("Item Unit", "items[0][unit]", "kg");
+
+			// createInput("Item Quantity", "items[1][name]", "Some nice pants");
+			// createInput("Item Price", "items[1][price]", "43");
+			// createInput("Item Quantity", "items[1][vat]", "0.13");
+			// createInput("Item Quantity", "items[1][quantity]", "1");
+			// createInput("Item Unit", "items[1][unit]", "pairs");
+
+			// createInput("Recurring Type", "recurring[type]", "subsequent");
+			// createInput("Recurring Reference", "recurring[reference]", "reference string");
+			// createInput("Recurring Scheduled", "recurring[scheduled]", "false");
+			// createInput("Recurring Initiator", "recurring[initiator]", "cardholder");
 		}
 
 		let authorization
