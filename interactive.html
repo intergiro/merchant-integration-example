@@ -24,11 +24,10 @@
 	<script>
 		const baseUrl = "https://merchant.intergiro.com/v1"
 		const key = "Bearer <insert key here>"
-
 		let authorization
 		function submit() {
 			authorization = {
-                "number": "Unique-number",
+				"number": "Unique-number",
 				"items": Number(document.getElementById("amount").value),
 				"currency": "EUR",
 				"card": {
@@ -65,13 +64,13 @@
 					break
 			}
 		}
-	
+
 		window.addEventListener("message", async e => {
 			if (e.data.destination == "parent" && e.data.content.name == "card") {
 				authorization.card = e.data.content.value
-            const iframe = document.getElementById("verification")
-            iframe.class = "hidden"
-            await authorize()
+				const iframe = document.getElementById("verification")
+				iframe.class = "hidden"
+				await authorize()
 			}
 
 		})
