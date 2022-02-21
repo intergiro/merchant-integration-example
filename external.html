@@ -10,6 +10,7 @@
 		iframe.hidden {
 			display: none;
 		}
+
 		iframe.visible {
 			border: none;
 			height: 70vh;
@@ -42,7 +43,7 @@
 				},
 				browser: { parent: window.location.origin }
 			}
-			verification = { 
+			verification = {
 				"number": "Unique-number2",
 				"items": authorization.items,
 				"currency": authorization.currency,
@@ -63,9 +64,10 @@
 					alert("sucess: " + JSON.stringify(body))
 					break
 				case 400:
-					if (body.error == "verification required" && body.content.details?.url)
+					if (body.error == "verification required" && body.content.details?.url) {
 						iframe.src = body.content.details.url
-					else if (body.error == "verification required")
+						authorization.id = body.id
+					} else if (body.error == "verification required")
 						await perform3d()
 					else
 						alert("failed: " + JSON.stringify(body))
