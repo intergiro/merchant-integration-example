@@ -41,17 +41,14 @@
 					],
 					"csc": document.getElementById("csc").value
 				},
-				browser: { parent: window.location.origin }
+				"target": "https://ptsv2.com/t/ete2l-1648547050/post"
 			}
+
 			verification = {
 				"number": "Unique-number2",
 				"items": authorization.items,
 				"currency": authorization.currency,
-				"card": {
-					"pan": authorization.card.pan,
-					"expires": authorization.card.expires,
-					"csc": authorization.card.csc
-				},
+				"card": authorization.card,
 				browser: { parent: window.location.origin }
 			}
 			authorize(authorization)
@@ -64,11 +61,12 @@
 					alert("sucess: " + JSON.stringify(body))
 					break
 				case 400:
+					authorization.id = body.id
 					if (body.error == "verification required" && body.content.details?.url) {
 						iframe.src = body.content.details.url
-						authorization.id = body.id
 					} else if (body.error == "verification required")
-						await perform3d()
+						// await perform3d()
+						alert("verif req")
 					else
 						alert("failed: " + JSON.stringify(body))
 					break
@@ -77,13 +75,13 @@
 					break
 			}
 		}
-		window.addEventListener("message", async e => {
-			if (e.data.destination == "parent" && e.data.content.name == "card") {
-				const response = JSON.parse(atob(e.data.content.value.split(".")[1]))
-				if (response.ver.type == "guard")
-					await authorize({ ...authorization, card: e.data.content.value })
-			}
-		})
+		// window.addEventListener("message", async e => {
+		// 	if (e.data.destination == "parent" && e.data.content.name == "card") {
+		// 		const response = JSON.parse(atob(e.data.content.value.split(".")[1]))
+		// 		if (response.ver.type == "guard")
+		// 			await authorize({ ...authorization, card: e.data.content.value })
+		// 	}
+		// })
 		async function post(url, key, body) {
 			const response = await fetch(url, {
 				method: "POST",
@@ -100,46 +98,51 @@
 
 
 
-		// Function used in this example to perform 3D. A public api key with 3D configurations is needed to test this example.
-		async function perform3d() {
-			const [status, body] = await post(baseUrl + "/verification?method=GET", "<public-api-key-with-3d-config>", verification)
-			const iframe = document.getElementById("verification")
-			switch (status) {
-				case 201:
-					authorization.card.verification = body
-					iframe.classList.remove("visible")
-					iframe.classList.add("hidden")
-					await authorize(authorization)
-					break
-				case 400:
-					if (body.error == "verification required") {
-						iframe.classList.replace("hidden", body.content.details.visible ? "visible" : "hidden")
-						iframe.src = body.content.details.url + "&parent=" + encodeURIComponent(window.location.origin)
-					} else
-						alert("failed: " + JSON.stringify(body))
-					break
-				default:
-					alert("failed: " + JSON.stringify(body))
-					break
-			}
-		}
+		// // Function used in this example to perform 3D. A public api key with 3D configurations is needed to test this example.
+		// async function perform3d() {
+		// 	const [status, body] = await post(baseUrl + "/authorization?method=GET", "Bearer <key with 3d config>", authorization)
+		// 	console.log(status, body)
+		// 	const iframe = document.getElementById("verification")
+		// 	switch (status) {
+		// 		case 201:
+		// 			authorization.card.verification = body
+		// 			iframe.classList.remove("visible")
+		// 			iframe.classList.add("hidden")
+		// 			await authorize(authorization)
+		// 			break
+		// 		case 400:
+		// 			authorization.id = body.id
+		// 			if (body.error == "verification required") {
+		// 				iframe.classList.replace("hidden", body.content.details.visible ? "visible" : "hidden")
+		// 				iframe.src = body.content.details.url + "&parent=" + encodeURIComponent(window.location.origin)
+		// 			} else
+		// 				alert("failed: " + JSON.stringify(body))
+		// 			break
+		// 		default:
+		// 			alert("failed: " + JSON.stringify(body))
+		// 			break
+		// 	}
+		// }
 
-		// EventListener used to receive data from the 3D process used in this example. 
-		window.addEventListener("message", async e => {
-			if (e.data.destination == "parent" && e.data.content.name == "card") {
-				const response = JSON.parse(atob(e.data.content.value.split(".")[1]))
-				if (response.ver.type != "guard") {
-					verification.card = e.data.content.value
-					await perform3d()
-				}
-				const iframe = document.getElementById("verification")
-				iframe.class = "hidden"
-			} else if (e.data.destination == "parent" && e.data.content.name == "verification") {
-				verification.card.verification = JSON.parse(e.data.content.value)
-				await perform3d()
-			}
+		// // EventListener used to receive data from the 3D process used in this example.
+		// window.addEventListener("message", async e => {
+		// 	if (e.data.destination == "parent" && e.data.content.name == "card") {
+		// 		const response = JSON.parse(atob(e.data.content.value.split(".")[1]))
+		// 		console.log("HE", response.ver)
+		// 		if (response.ver.type != "guard") {
+		// 			verification.card = e.data.content.value
+		// 			await perform3d()
+		// 		}
+		// 		const iframe = document.getElementById("verification")
+		// 		iframe.class = "hidden"
+		// 	} else if (e.data.destination == "parent" && e.data.content.name == "verification") {
+		// 		verification.card.verification = JSON.parse(e.data.content.value)
+		// 		console.log("J")
 
-		})
+		// 		await perform3d()
+		// 	}
+
+		// })
 
 	</script>
 </head>
@@ -152,7 +155,7 @@
 		<label for="csc">CSC</label>
 		<input type="text" id="csc" name="csc" value="987" />
 		<label for="expires">Expires</label>
-		<input type="text" id="expires" name="expires" placeholder="MM/YY" value="2/22" />
+		<input type="text" id="expires" name="expires" placeholder="MM/YY" value="2/24" />
 		<label for="amount">Amount</label>
 		<input type="text" id="amount" name="amount" value="250" />
 	</form>

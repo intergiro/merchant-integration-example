@@ -10,6 +10,7 @@
 		iframe.hidden {
 			display: none;
 		}
+
 		iframe.visible {
 			border: none;
 			height: 70vh;
@@ -17,13 +18,14 @@
 			max-width: 40em;
 			outline: 1px solid red;
 		}
+
 		input {
 			display: block;
 		}
 	</style>
 	<script>
 		const baseUrl = "https://merchant.intergiro.com/v1"
-		const key = "Bearer <insert key here>"
+		const key = "Bearer <key>"
 		let authorization
 		function submit() {
 			authorization = {
@@ -38,7 +40,22 @@
 					],
 					"csc": document.getElementById("csc").value
 				},
-				browser: { parent: window.location.origin }
+				capture: "auto",
+				browser: {
+					parent: window.location.origin,
+					"ip": "127.0.0.1",
+					"colorDepth": 24,
+					"java": true,
+					"javascript": true,
+					"locale": "nl-NL",
+					"timezone": 123,
+					"resolution": [
+						1536,
+						723
+					],
+					"acceptHeader": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+					"userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36"
+				}
 			}
 			authorize()
 		}
