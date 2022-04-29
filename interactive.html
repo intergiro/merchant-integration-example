@@ -23,7 +23,6 @@
 	</style>
 	<script>
 		const baseUrl = "https://merchant.intergiro.com/v1"
-		const key = "Bearer <insert key here>"
 		let authorization
 		function submit() {
 			authorization = {
@@ -43,7 +42,7 @@
 			authorize()
 		}
 		async function authorize() {
-			const [status, body] = await post(baseUrl + "/authorization?method=GET", key, authorization)
+			const [status, body] = await post(baseUrl + "/authorization?method=GET", "Bearer " + document.getElementById("key").value.trim(), authorization)
 			const iframe = document.getElementById("verification")
 			switch (status) {
 				case 201:
@@ -94,12 +93,14 @@
 <body style="width: 100%; max-width: 20em; margin-left: auto; margin-right: auto;">
 	<iframe id="verification" class="hidden"></iframe>
 	<form method="post">
+		<label for="key">Public API key</label>
+		<input type="text" id="key" name="key" />
 		<label for="pan">PAN</label>
 		<input type="text" id="pan" name="pan" value="4111111111111111" />
 		<label for="csc">CSC</label>
 		<input type="text" id="csc" name="csc" value="987" />
 		<label for="expires">Expires</label>
-		<input type="text" id="expires" name="expires" placeholder="MM/YY" value="2/22" />
+		<input type="text" id="expires" name="expires" placeholder="MM/YY" value="2/24" />
 		<label for="amount">Amount</label>
 		<input type="text" id="amount" name="amount" value="250" />
 	</form>
