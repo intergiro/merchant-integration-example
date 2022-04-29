@@ -57,7 +57,7 @@
 			authorize(authorization)
 		}
 		async function authorize(creatable) {
-			const [status, body] = await post(baseUrl + "/authorization", document.getElementById("no3dKey").value, creatable)
+			const [status, body] = await post(baseUrl + "/authorization", document.getElementById("no3dKey").value.trim(), creatable)
 			const iframe = document.getElementById("verification")
 			switch (status) {
 				case 201:
@@ -102,7 +102,7 @@
 
 		// Function used in this example to perform 3D. A public api key with 3D configurations is needed to test this example.
 		async function perform3d() {
-			const [status, body] = await post(baseUrl + "/verification?method=GET", document.getElementById("key").value, verification)
+			const [status, body] = await post(baseUrl + "/verification?method=GET", document.getElementById("key").value.trim(), verification)
 			const iframe = document.getElementById("verification")
 			switch (status) {
 				case 201:
