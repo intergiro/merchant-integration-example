@@ -6,6 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title></title>
+	<script type="text/javascript" src="./utilities.js"></script>
 </head>
 <style>
 	iframe {
@@ -22,31 +23,12 @@
 
 <script>
 	let authorization
-	let authorizationNumber = (() => {
-			result = ""
-			const ranges = [
-				[48, 58],
-				[65, 91],
-				[97, 123]
-			]
-			for (let i = 0; i < 20; i++) {
-				const categoryIndexer = Math.random() * 12
-				const category = categoryIndexer < 2 ? 0 : categoryIndexer < 7 ? 1 : 2
-				result += String.fromCharCode(Math.floor(Math.random() * (ranges[category][1] - ranges[category][0]) + ranges[category][0]))
-			}
-			return result
-		})()
 	window.addEventListener('DOMContentLoaded', (event) => {
-		let search = (new URL(document.location)).searchParams;
-		document.getElementById("pan").value = search.get('automatic') ? "9001100911111111" : "4111111111111111";
-		const expiryYear = (new Date(Date.now()).getFullYear() - 2000 + 1)
-		document.getElementById("expires").value = `1/${expiryYear}`
-		if (search.get('key'))
-			document.getElementById("api-key").value = search.get('key')
+		initialize()
 	});
 	function submit() {
 		authorization = {
-			"number": authorizationNumber, // "Should be your unique authorization number"
+			"number": generateUnique(), // "Should be your unique authorization number"
 			"items": Number(document.getElementById("amount").value),
 			"currency": "EUR",
 			"card": {
@@ -74,13 +56,6 @@
 			appendTobody("p", e.data.content.value)
 		}
 	})
-
-	function appendTobody(elementType, text) {
-		const element = document.createElement(elementType)
-    element.textContent = text
-  	document.body.appendChild(element)
-	}
-
 </script>
 
 <body style="width: 100%; max-width: 20em; margin-left: auto; margin-right: auto;">
@@ -97,7 +72,7 @@
 		<label for="csc">CSC</label>
 		<input type="text" id="csc" name="csc" value="987" />
 		<label for="expires">Expires</label>
-		<input type="text" id="expires" name="expires" placeholder="MM/YY" value="2/24" />
+		<input type="text" id="expires" name="expires" placeholder="MM/YY" value="1/32" />
 		<label for="amount">Amount</label>
 		<input type="text" id="amount" name="amount" value="250" />
 	</form>
