@@ -2,81 +2,82 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title></title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title></title>
+	<script type="text/javascript" src="./utilities.js"></script>
 </head>
 <style>
-   
+	iframe {
+		border: none;
+		height: 70vh;
+		width: 90vw;
+		max-width: 40em;
+	}
 
-    iframe {
-        border: none;
-        height: 70vh;
-        width: 90vw;
-        max-width: 40em;
-    }
-
-    input {
-        display: block;
-    }
+	input {
+		display: block;
+	}
 </style>
 
 <script>
-
-    let authorization
-    function submit() {
-        authorization = {
-            "number": "Unique-number",
-            "items": Number(document.getElementById("amount").value),
-            "currency": "EUR",
-            "card": {
-                "pan": document.getElementById("pan").value,
-                "expires": [
-                    Number(document.getElementById("expires").value.split("/")[0]),
-                    Number(document.getElementById("expires").value.split("/")[1])
-                ],
-                "csc": document.getElementById("csc").value
-            },
-            browser: { parent: window.location.origin }
-        }
-        authorize()
-    }
-    async function authorize() {
-        const form = document.getElementById("iframePost")
-        form.input.value = JSON.stringify(authorization)
-        form.key.value = "Bearer " + document.getElementById("api-key").value.trim()
-        form.submit()
-    }
-    window.addEventListener("message", async e => {
-        if (e.data.destination == "parent" && e.data.content.name == "authorization") {
-            alert(e.data.content.value)
-        }
-    })
-
-
+	let authorization
+	window.addEventListener('DOMContentLoaded', (event) => {
+		initialize()
+	});
+	function submit() {
+		authorization = {
+			"number": generateUnique(), // "Should be your unique authorization number"
+			"items": Number(document.getElementById("amount").value),
+			"currency": "EUR",
+			"card": {
+				"pan": document.getElementById("pan").value,
+				"expires": [
+					Number(document.getElementById("expires").value.split("/")[0]),
+					Number(document.getElementById("expires").value.split("/")[1])
+				],
+				"csc": document.getElementById("csc").value
+			},
+			browser: { parent: window.location.origin }
+		}
+		authorize()
+	}
+	async function authorize() {
+		const form = document.getElementById("iframePost")
+		form.input.value = JSON.stringify(authorization)
+		form.key.value = "Bearer " + document.getElementById("api-key").value.trim()
+		form.submit()
+	}
+	window.addEventListener("message", async e => {
+		if (e.data.destination == "parent" && e.data.content.name == "authorization") {
+			alert(e.data.content.value)
+			appendTobody("h1", "Created Authorization:")
+			appendTobody("p", e.data.content.value)
+		}
+	})
 </script>
 
 <body style="width: 100%; max-width: 20em; margin-left: auto; margin-right: auto;">
-    <form method="post" id="iframePost" action="https://merchant.intergiro.com/v1/authorization/redirect"
-        target="verification">
-        <input type="hidden" id="input" name="input"></input>
-        <input type="hidden" id="key" name="key"></input>
-    </form>
-    <form method="post">
-        <label for="key">Public API key</label>
-        <input type="text" id="api-key" name="key" />
-        <label for="pan">PAN</label>
-        <input type="text" id="pan" name="pan" value="4111111111111111" />
-        <label for="csc">CSC</label>
-        <input type="text" id="csc" name="csc" value="987" />
-        <label for="expires">Expires</label>
-        <input type="text" id="expires" name="expires" placeholder="MM/YY" value="2/24" />
-        <label for="amount">Amount</label>
-        <input type="text" id="amount" name="amount" value="250" />
-    </form>
-    <button onclick="submit()">Submit</button>
-    <iframe id="verification" name="verification"></iframe>
+	<form method="post" id="iframePost" action="https://merchant.intergiro.com/v1/authorization/redirect"
+		target="verification">
+		<input type="hidden" id="input" name="input"></input>
+		<input type="hidden" id="key" name="key"></input>
+	</form>
+	<form method="post">
+		<label for="key">Public API key</label>
+		<input type="text" id="api-key" name="key" />
+		<label for="pan">PAN</label>
+		<input type="text" id="pan" name="pan" value="4111111111111111" />
+		<label for="csc">CSC</label>
+		<input type="text" id="csc" name="csc" value="987" />
+		<label for="expires">Expires</label>
+		<input type="text" id="expires" name="expires" placeholder="MM/YY" value="1/32" />
+		<label for="amount">Amount</label>
+		<input type="text" id="amount" name="amount" value="250" />
+	</form>
+	<button onclick="submit()">Submit</button>
+	<iframe id="verification" name="verification"></iframe>
 </body>
 
 </html>
