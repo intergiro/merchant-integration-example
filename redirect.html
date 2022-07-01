@@ -26,10 +26,9 @@
 	window.addEventListener('DOMContentLoaded', (event) => {
 		initialize()
 	});
-	const authorizationNumber = generateUnique() // "Should be your unique authorization number"
 	function submit() {
 		authorization = {
-			"number": authorizationNumber,
+			"number": generateUnique(), // "Should be your unique authorization number"
 			"items": Number(document.getElementById("amount").value),
 			"currency": "EUR",
 			"card": {

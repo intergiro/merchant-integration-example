@@ -28,10 +28,9 @@
 		const baseUrl = "https://merchant.intergiro.com/v1"
 		let authorization
 		let verification
-		const authorizationNumber = generateUnique() // "Should be your unique authorization number"
 		function submit() {
 			authorization = {
-				"number": authorizationNumber,
+				"number": generateUnique(), // "Should be your unique authorization number"
 				"items": Number(document.getElementById("amount").value),
 				"currency": "EUR",
 				"card": {
