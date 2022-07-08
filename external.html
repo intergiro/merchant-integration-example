@@ -6,6 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
 	<meta http-equiv="x-ua-compatible" content="IE=Edge">
 	<title>Verification Example</title>
+	<script type="text/javascript" src="./utilities.js"></script>
 	<style>
 		iframe.hidden {
 			display: none;
@@ -27,10 +28,9 @@
 		const baseUrl = "https://merchant.intergiro.com/v1"
 		let authorization
 		let verification
-
 		function submit() {
 			authorization = {
-				"number": "Unique-number1",
+				"number": generateUnique(), // "Should be your unique authorization number"
 				"items": Number(document.getElementById("amount").value),
 				"currency": "EUR",
 				"card": {
@@ -44,7 +44,7 @@
 				browser: { parent: window.location.origin }
 			}
 			verification = {
-				"number": "Unique-number2",
+				"number": authorizationNumber,
 				"items": authorization.items,
 				"currency": authorization.currency,
 				"card": {

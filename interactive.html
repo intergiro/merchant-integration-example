@@ -6,10 +6,12 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
 	<meta http-equiv="x-ua-compatible" content="IE=Edge">
 	<title>Verification Example</title>
+	<script type="text/javascript" src="./utilities.js"></script>
 	<style>
 		iframe.hidden {
 			display: none;
 		}
+
 		iframe.visible {
 			border: none;
 			height: 70vh;
@@ -17,6 +19,7 @@
 			max-width: 40em;
 			outline: 1px solid red;
 		}
+
 		input {
 			display: block;
 		}
@@ -26,7 +29,7 @@
 		let authorization
 		function submit() {
 			authorization = {
-				"number": "Unique-number",
+				"number": generateUnique(), // "Should be your unique authorization number"
 				"items": Number(document.getElementById("amount").value),
 				"currency": "EUR",
 				"card": {
