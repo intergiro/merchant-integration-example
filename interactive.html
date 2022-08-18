@@ -25,22 +25,27 @@
 		}
 	</style>
 	<script>
-		const baseUrl = "https://merchant.intergiro.com/v1"
+		// const baseUrl = "https://merchant-worker-card-cde-development-proxy.processor.workers.dev"
+		// const baseUrl = "https://merchant-worker-authorization-cde-development.authtest.workers.dev"
+		const baseUrl = "http://localhost:7100"
+		// const baseUrl = "https://api.payfunc.com"
 		let authorization
 		function submit() {
+			const card = document.getElementById("pan").value.trim()
 			authorization = {
 				"number": generateUnique(), // "Should be your unique authorization number"
 				"items": Number(document.getElementById("amount").value),
 				"currency": "EUR",
-				"card": {
-					"pan": document.getElementById("pan").value,
+				"card": card.length > 20 ? card : {
+					"pan": card,
 					"expires": [
 						Number(document.getElementById("expires").value.split("/")[0]),
 						Number(document.getElementById("expires").value.split("/")[1])
 					],
 					"csc": document.getElementById("csc").value
 				},
-				browser: { parent: window.location.origin }
+				// browser: { parent: window.location.origin }
+				// target: "https://ptsv2.com/t/fkh/post"
 			}
 			authorize()
 		}
@@ -97,9 +102,14 @@
 	<iframe id="verification" class="hidden"></iframe>
 	<form method="post">
 		<label for="key">Public API key</label>
-		<input type="text" id="key" name="key" />
+		<input type="text" id="key" name="key"
+			value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjcwNzEiLCJpYXQiOjE2NDY3NDk5MzgsIm5hbWUiOiJ0ZXN0dGVzdCIsInR5cGUiOiJ0ZXN0IiwiYWdlbnQiOiJ0ZXN0dGVzdCIsInVybCI6Ind3dy5leGFtcGxlLmNvbSIsImNhcmQiOnsiYWNxdWlyZXIiOiJhT3lKbjdBSHg3MlR5R0I0QWlNaGwzS0FFaF8tNGFpbmgtNHQ2NUktdkJTNWlUQWo4RHczWWpiRi1FQTJ6Y201Q1ZPMXo0bVR6VTAwTXloLVNDSng4Q0p3Y205MGIyTnZiQ0k2SW1sdWRHVnlaMmx5YnlJc0luVnliQ0k2SW1oMGRIQTZMeTlzYjJOaGJHaHZjM1E2TnpFd01DSjkiLCJjb3VudHJ5IjoiU0UiLCJkZXNjcmlwdG9yIjoidGVzdCB0cmFuc2FjdGlvbiIsImVtdjNkIjoiS0xMOTA3dmx6VFktM1lXSXJEaWJfMzJvenI1Y0VCM254cnZPdzFyZHlNbGZhcjN2UVZycVFqLTR4ekhQbmswSHI3SFdOQ0N6VUN2Snk2TEd2dHVxZXlJc0luVnliQ0k2SW1oMGRIQnpPaTh2YzJWeWRtbGpaUzV6WVc1a1ltOTRMak5rYzJWamRYSmxMbWx2SW4wc2V5SndjbTkwYjJOdmJDSTZJbU5vTTJReElpd2lkWEpzSWpvaWFIUjBjSE02THk5aGNHa3VjR0Y1Wm5WdVl5NWpiMjB2WTJnelpERnphVzBpTENKclpYa2lPaUp1YnkxclpYa2lmVjAiLCJtY2MiOiIxMjM0IiwibWlkIjoiODEwMzAwMDExMSIsInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6NzEwMCJ9LCJzdWIiOiJ0ZXN0dGVzdCIsImF1ZCI6InB1YmxpYyIsImZlYXR1cmVzIjoiIn0.BTyqNMmXhXesLj8sQo_-FH6-zTyqKAPyfJ2XXwpPYek" />
+		<!-- value="eyJhbGciOiJIUzI1NiIsInR5cCI6kpXVCJ9.eyJpc3MiOiJodHRwczovL2FwaS5wYXlmdW5jLmNvbSIsImlhdCI6MTYzNDIyODMyNywibmFtZSI6IlRyb2NhZGVybyBUZWFtIFRlc3QgTWVyY2hhbnQiLCJhZ2VudCI6IlBheUZ1bmMiLCJ0eXBlIjoidGVzdCIsInVybCI6Ind3dy5leGFtcGxlLmNvbSIsImNhcmQiOnsiYWNxdWlyZXIiOiJrS3ZCOFowSkp6VTNyenBmbWVGMlNFeWQ4Q0hrUUR2Wi1HN1AzRVUwNDcxMkJKMDV1R3lYZHNmcnRqYWlwV3g3cDVySGZ1NjZTbVYzVVJDT0RFOWR0U0p3Y205MGIyTnZiQ0k2SW1sdWRHVnlaMmx5YnlJc0luVnliQ0k2SW1oMGRIQnpPaTh2WVhCcExuQmhlV1oxYm1NdVkyOXRJbjAiLCJjb3VudHJ5IjoiU0UiLCJkZXNjcmlwdG9yIjoidGVzdCB0cmFuc2FjdGlvbiIsImVtdjNkIjoiT3pRYlJTT2YyM2VEcUdMV0FBc2NKUjhhUW1ka1h3d1JXSlg2QkJsYm02TVo5aUNIRzRRWDd2Zl93d1VjRFlfaXlzNm8xbjlvcS1Lcms0ZnpHQ2czd1NJc0luVnliQ0k2SW1oMGRIQnpPaTh2YzJWeWRtbGpaUzV6WVc1a1ltOTRMak5rYzJWamRYSmxMbWx2SW4wc2V5SndjbTkwYjJOdmJDSTZJbU5vTTJReElpd2lkWEpzSWpvaWFIUjBjSE02THk5aGNHa3VZMkZ5WkdaMWJtTXVZMjl0TDJOb00yUXhjMmx0SWl3aWEyVjVJam9pYm04dGEyVjVJbjFkIiwibWNjIjoiMTIzNCIsIm1pZCI6IjgxMDMwMDAxMTEiLCJ1cmwiOiJodHRwczovL2FwaS5wYXlmdW5jLmNvbSJ9LCJzdWIiOiJVRmE5enRXMSIsImF1ZCI6InB1YmxpYyIsImZlYXR1cmVzIjoiIn0.fgfghWL8jmuvd7PfYMHmkV-v2uyMatvejYlPLX5TGco" /> -->
+		<!-- value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2FwaS5wYXlmdW5jLmNvbSIsImlhdCI6MTYyMzQyNjE2NSwibmFtZSI6InRlc3R0ZXN0IiwidXJsIjoid3d3LmV4YW1wbGUuY29tIiwiZW1haWwiOiJSTExCNGdOaVBzYk9LYUlEYmgzRGFDYnd4WWlGb3lmeVI4dkU2TnFJQ2NObThKcGhwRWViRkZfSmgzeVhSZjdpU3NJN250dy1mRW5Qeml1WU5NeU82bWRwTFhsNE0zQnJOWEJEZFVFaUxDSnViM1JwWm5raU9pSWlmUSIsImNhcmQiOnsiYWNxdWlyZXIiOiJMczZXbkVLdEtkcW9iY1RQTW9QdlhOanlhNVUwRnpaRWJ4dEpPZlNlQml5c3REYkVlN25DVkhkcEVWcWViWnJJMVp1ODJZN2U4RDF3X2FKclJ2dXdleUp3Y205MGIyTnZiQ0k2SW1sdWRHVnlaMmx5YnlJc0luVnliQ0k2SW1oMGRIQnpPaTh2WVhCcExuQmhlV1oxYm1NdVkyOXRJbjAiLCJjb3VudHJ5IjoiU0UiLCJkZXNjcmlwdG9yIjoidGVzdCB0cmFuc2FjdGlvbiIsImVtdjNkIjoiSWEzOTRhRWJNVTdrdVJIdDRxNlUzZGd0dzIzZmg4UFRPTXpiRjF4c0xPWW1aR3FHUTJtdl9rdXdBWllMSmltX1pwakc0UjdWRVpva0pwamhXOGdleGlJc0luVnliQ0k2SW1oMGRIQnpPaTh2YzJWeWRtbGpaUzV6WVc1a1ltOTRMak5rYzJWamRYSmxMbWx2SW4wc2V5SndjbTkwYjJOdmJDSTZJbU5vTTJReElpd2lkWEpzSWpvaWFIUjBjSE02THk5aGNHa3VZMkZ5WkdaMWJtTXVZMjl0TDJOb00yUXhjMmx0SWl3aWEyVjVJam9pYm04dGEyVjVJbjFkIiwiaWQiOiJ0ZXN0IiwibWNjIjoiMTIzNCIsIm1pZCI6IjgxMDMwMDAxMTEiLCJ1cmwiOiJodHRwczovL2FwaS5wYXlmdW5jLmNvbSJ9LCJzdWIiOiJ0ZXN0dGVzdCIsImFnZW50IjoidGVzdCIsImF1ZCI6InB1YmxpYyIsImZlYXR1cmVzIjoiIn0.0FLx7wI4f0r7Rmi6g5ALeR38p8dJ307A9TZJ6-C2iAw" /> -->
+		<!-- value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjcwNzEiLCJpYXQiOjE2NTc4NzYzMTgsImFnZW50IjoidGVzdHRlc3QiLCJpZCI6InRlc3R0ZXN0IiwibmFtZSI6InRlc3R0ZXN0IiwidXJsIjoid3d3LmV4YW1wbGUuY29tIiwiZW1haWwiOiJqYjhuSlM2TnZ0SkRscmdMd081REd6eHZ3Z3owUFhmUzg4NnIyMWg4OWVHLVh3c3ZCSERWc250QW40ZC0td05tWG5lbXNTZDFtb3NGam5oVnFjeEw1V2RwTFhsNE0zQnJOWEJEZFVFaUxDSnViM1JwWm5raU9pSWlmUSIsImNhcmQiOnsiYWNxdWlyZXIiOiJfN0FwM2hudDNzdTMyTlhubDZIODFVSWdJNzcwZG10Z1phTlVFNmZIZFNTNEhxTFYwWWh0Z1pHeUViQ2F0RzJvbldrSm1QRVJzcnJiUFg1RXhtdFZEQ0p3Y205MGIyTnZiQ0k2SW1sdWRHVnlaMmx5YnlJc0luVnliQ0k2SW1oMGRIQnpPaTh2YldWeVkyaGhiblF0ZDI5eWEyVnlMV05oY21RdFkyUmxMV1JsZG1Wc2IzQnRaVzUwTFhCeWIzaDVMbkJ5YjJObGMzTnZjaTUzYjNKclpYSnpMbVJsZGlKOSIsImNvdW50cnkiOiJTRSIsImRlc2NyaXB0b3IiOiJ0ZXN0IHRyYW5zYWN0aW9uIiwiZW12M2QiOiJRQjVaUzNJYkFGRU9GTjY2U3hhWXQ0SU9mUGhNYVFiU3lMS2JfdFg4OGc1aHZsMVRFQnF6VzlId29MbnFyUHBQcmhpdG5DV3E0UXlEVTZPNkNOdDZIQ0lzSW5WeWJDSTZJbWgwZEhCek9pOHZjMlZ5ZG1salpTNXpZVzVrWW05NExqTmtjMlZqZFhKbExtbHZJbjBzZXlKd2NtOTBiMk52YkNJNkltTm9NMlF4SWl3aWRYSnNJam9pYUhSMGNITTZMeTl0WlhKamFHRnVkQzVwYm5SbGNtZHBjbTh1WTI5dEwzWXhMMk5vTTJReGMybHRJaXdpYTJWNUlqb2libTh0YTJWNUluMWQiLCJpZCI6InRlc3QiLCJtY2MiOiIxMjM0IiwibWlkIjoiODEwMzAwMDExMSIsInVybCI6Imh0dHBzOi8vbWVyY2hhbnQtd29ya2VyLWNhcmQtY2RlLWRldmVsb3BtZW50LXByb3h5LnByb2Nlc3Nvci53b3JrZXJzLmRldiJ9LCJzdWIiOiJ0ZXN0dGVzdCIsImF1ZCI6InB1YmxpYyIsImZlYXR1cmVzIjoiIn0.nzEbhJuyhHaTtNIoLtmTE3H2GoKRURVSRpi9IiUph9Y" /> -->
 		<label for="pan">PAN</label>
-		<input type="text" id="pan" name="pan" value="4111111111111111" />
+		<input type="text" id="pan" name="pan" value="9001100911111111" />
+		<!-- <input type="text" id="pan" name="pan" value="9000100111111111" /> -->
 		<label for="csc">CSC</label>
 		<input type="text" id="csc" name="csc" value="987" />
 		<label for="expires">Expires</label>

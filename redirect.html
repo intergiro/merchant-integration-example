@@ -59,14 +59,14 @@
 </script>
 
 <body style="width: 100%; max-width: 20em; margin-left: auto; margin-right: auto;">
-	<form method="post" id="iframePost" action="https://merchant.intergiro.com/v1/authorization/redirect"
-		target="verification">
+	<form method="post" id="iframePost" action="http://localhost:7100/authorization/redirect" target="verification">
 		<input type="hidden" id="input" name="input"></input>
 		<input type="hidden" id="key" name="key"></input>
 	</form>
 	<form method="post">
 		<label for="key">Public API key</label>
-		<input type="text" id="api-key" name="key" />
+		<input type="text" id="api-key" name="key"
+			value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjcwNzEiLCJpYXQiOjE2NDY3NDk5MzgsIm5hbWUiOiJ0ZXN0dGVzdCIsInR5cGUiOiJ0ZXN0IiwiYWdlbnQiOiJ0ZXN0dGVzdCIsInVybCI6Ind3dy5leGFtcGxlLmNvbSIsImNhcmQiOnsiYWNxdWlyZXIiOiJhT3lKbjdBSHg3MlR5R0I0QWlNaGwzS0FFaF8tNGFpbmgtNHQ2NUktdkJTNWlUQWo4RHczWWpiRi1FQTJ6Y201Q1ZPMXo0bVR6VTAwTXloLVNDSng4Q0p3Y205MGIyTnZiQ0k2SW1sdWRHVnlaMmx5YnlJc0luVnliQ0k2SW1oMGRIQTZMeTlzYjJOaGJHaHZjM1E2TnpFd01DSjkiLCJjb3VudHJ5IjoiU0UiLCJkZXNjcmlwdG9yIjoidGVzdCB0cmFuc2FjdGlvbiIsImVtdjNkIjoiS0xMOTA3dmx6VFktM1lXSXJEaWJfMzJvenI1Y0VCM254cnZPdzFyZHlNbGZhcjN2UVZycVFqLTR4ekhQbmswSHI3SFdOQ0N6VUN2Snk2TEd2dHVxZXlJc0luVnliQ0k2SW1oMGRIQnpPaTh2YzJWeWRtbGpaUzV6WVc1a1ltOTRMak5rYzJWamRYSmxMbWx2SW4wc2V5SndjbTkwYjJOdmJDSTZJbU5vTTJReElpd2lkWEpzSWpvaWFIUjBjSE02THk5aGNHa3VjR0Y1Wm5WdVl5NWpiMjB2WTJnelpERnphVzBpTENKclpYa2lPaUp1YnkxclpYa2lmVjAiLCJtY2MiOiIxMjM0IiwibWlkIjoiODEwMzAwMDExMSIsInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6NzEwMCJ9LCJzdWIiOiJ0ZXN0dGVzdCIsImF1ZCI6InB1YmxpYyIsImZlYXR1cmVzIjoiIn0.BTyqNMmXhXesLj8sQo_-FH6-zTyqKAPyfJ2XXwpPYek" />
 		<label for="pan">PAN</label>
 		<input type="text" id="pan" name="pan" value="4111111111111111" />
 		<label for="csc">CSC</label>
