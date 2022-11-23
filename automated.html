@@ -1,83 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title></title>
+    <script type="text/javascript" src="./utilities.js"></script>
+  </head>
+  <style>
+	body,iframe{max-width:40em}body{width:100%;margin-left:30pt;margin-top:15pt}iframe{border:none;height:70vh;width:120vw}input{display:block;margin-bottom:10pt;margin-top:1pt}.flex-container{display:flex}.flex-child{padding:10pt;flex:1;border:1pt solid gray}.flex-child:first-child{margin-right:10pt}
+  </style>
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title></title>
-	<script type="text/javascript" src="./utilities.js"></script>
-</head>
-<style>
-	iframe {
-		border: none;
-		height: 70vh;
-		width: 90vw;
-		max-width: 40em;
-	}
+  <script>
+    let authorization;
+    window.addEventListener("DOMContentLoaded", (event) => {
+      initialize();
+    });
+    function collectCardAndPaymentData() {
+      authorization = {
+        number: generateUnique(), // "Should be merchants unique authorization number"
+        items: Number(document.getElementById("amount").value),
+        currency: "EUR",
+        card: {
+          pan: document.getElementById("pan").value,
+          expires: [
+            Number(document.getElementById("expires").value.split("/")[0]),
+            Number(document.getElementById("expires").value.split("/")[1]),
+          ],
+          csc: document.getElementById("csc").value,
+        },
+        browser: { parent: window.location.origin },
+      };
+      authorize();
+    }
+    async function authorize() {
+      const form = document.getElementById("iframePost");
+      form.input.value = JSON.stringify(authorization);
+      form.key.value =
+        "Bearer " + document.getElementById("api-key").value.trim();
+      form.submit();
+    }
+    window.addEventListener("message", async (e) => {
+      if (
+        e.data.destination == "parent" &&
+        e.data.content.name == "authorization"
+      ) {
+        appendTobody("p", e.data.content.value);
+      }
+    });
+  </script>
 
-	input {
-		display: block;
-	}
-</style>
+  <body>
+    <h3>
+      Intergiro Acquiring API for PSPs -
+      <a
+        href="https://intergiro.github.io/developer-portal/merchant/integrations/automated.html"
+        target="_blank"
+        >Automated Flow</a
+      >
+    </h3>
 
-<script>
-	let authorization
-	window.addEventListener('DOMContentLoaded', (event) => {
-		initialize()
-	});
-	function submit() {
-		authorization = {
-			"number": generateUnique(), // "Should be your unique authorization number"
-			"items": Number(document.getElementById("amount").value),
-			"currency": "EUR",
-			"card": {
-				"pan": document.getElementById("pan").value,
-				"expires": [
-					Number(document.getElementById("expires").value.split("/")[0]),
-					Number(document.getElementById("expires").value.split("/")[1])
-				],
-				"csc": document.getElementById("csc").value
-			},
-			browser: { parent: window.location.origin }
-		}
-		authorize()
-	}
-	async function authorize() {
-		const form = document.getElementById("iframePost")
-		form.input.value = JSON.stringify(authorization)
-		form.key.value = "Bearer " + document.getElementById("api-key").value.trim()
-		form.submit()
-	}
-	window.addEventListener("message", async e => {
-		if (e.data.destination == "parent" && e.data.content.name == "authorization") {
-			alert(e.data.content.value)
-			appendTobody("h1", "Created Authorization:")
-			appendTobody("p", e.data.content.value)
-		}
-	})
-</script>
+    <div class="flex-container">
+      <div class="flex-child one">
+        <form method="post">
+          <label for="key">Merchants Public API key</label>
+          <input type="text" id="api-key" name="key" />
+          <label for="pan">Card PAN</label>
+          <input type="text" id="pan" name="pan" value="4111111111111111" />
+          <label for="csc">CSC</label>
+          <input type="text" id="csc" name="csc" value="987" />
+          <label for="expires">Card Expiration Date</label>
+          <input
+            type="text"
+            id="expires"
+            name="expires"
+            placeholder="MM/YY"
+            value="1/32"
+          />
+          <label for="amount">Amount in EUR</label>
+          <input type="text" id="amount" name="amount" value="5" />
+        </form>
+        <button onclick="collectCardAndPaymentData()">Pay now</button>
+      </div>
 
-<body style="width: 100%; max-width: 20em; margin-left: auto; margin-right: auto;">
-	<form method="post" id="iframePost" action="https://merchant.intergiro.com/v1/authorization/redirect"
-		target="verification">
-		<input type="hidden" id="input" name="input"></input>
-		<input type="hidden" id="key" name="key"></input>
-	</form>
-	<form method="post">
-		<label for="key">Public API key</label>
-		<input type="text" id="api-key" name="key" />
-		<label for="pan">PAN</label>
-		<input type="text" id="pan" name="pan" value="4111111111111111" />
-		<label for="csc">CSC</label>
-		<input type="text" id="csc" name="csc" value="987" />
-		<label for="expires">Expires</label>
-		<input type="text" id="expires" name="expires" placeholder="MM/YY" value="1/32" />
-		<label for="amount">Amount</label>
-		<input type="text" id="amount" name="amount" value="250" />
-	</form>
-	<button onclick="submit()">Submit</button>
-	<iframe id="verification" name="verification"></iframe>
-</body>
+      <div class="flex-child two">
+        <form
+          method="post"
+          id="iframePost"
+          action="https://merchant.intergiro.com/v1/authorization/redirect"
+          target="verification"
+        >
+          <input type="hidden" id="input" name="input" />
+          <input type="hidden" id="key" name="key" />
+        </form>
 
+        <iframe id="verification" name="verification"></iframe>
+      </div>
+    </div>
+  </body>
 </html>
