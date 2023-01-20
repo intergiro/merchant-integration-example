@@ -25,7 +25,7 @@
 		}
 	</style>
 	<script>
-		const baseUrl = "https://merchant.intergiro.com/v1"
+		const baseUrl = "https://api.payfunc.com/v1"
 		let authorization
 		let verification
 		function submit() {
@@ -41,6 +41,7 @@
 					],
 					"csc": document.getElementById("csc").value
 				},
+				"capture": "auto",
 				browser: { parent: window.location.origin }
 			}
 			verification = {
@@ -148,7 +149,7 @@
 	<iframe id="verification" class="hidden"></iframe>
 	<form method="post">
 		<label for="pan">PAN</label>
-		<input type="text" id="pan" name="pan" value="4111111111111111" />
+		<!-- <input type="text" id="pan" name="pan" value="4111111111111111" /> -->
 		<label for="csc">CSC</label>
 		<input type="text" id="csc" name="csc" value="987" />
 		<label for="expires">Expires</label>

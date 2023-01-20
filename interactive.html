@@ -8,6 +8,9 @@
 	<title>Verification Example</title>
 	<script type="text/javascript" src="./utilities.js"></script>
 	<style>
+		body {
+			background-color: red;
+		}
 		iframe.hidden {
 			display: none;
 		}
@@ -19,20 +22,24 @@
 			max-width: 40em;
 			outline: 1px solid red;
 		}
-
+		iframe {
+			background-color: white;
+		}
 		input {
 			display: block;
 		}
 	</style>
 	<script>
-		const baseUrl = "https://merchant.intergiro.com/v1"
+		const baseUrl = "https://dev.igacq.com/v1"
 		let authorization
+		let idempotency
 		function submit() {
 			authorization = {
-				"number": generateUnique(), // "Should be your unique authorization number"
+				"id": authorization ? authorization.id : undefined,
+				"number": "11", // "Should be your unique authorization number"
 				"items": Number(document.getElementById("amount").value),
 				"currency": "EUR",
-				"card": {
+				"card":(document.getElementById("pan").value).length > 20 ? document.getElementById("pan").value : {
 					"pan": document.getElementById("pan").value,
 					"expires": [
 						Number(document.getElementById("expires").value.split("/")[0]),
@@ -40,7 +47,10 @@
 					],
 					"csc": document.getElementById("csc").value
 				},
-				browser: { parent: window.location.origin }
+				"capture": "auto",
+				browser: { parent: window.location.origin},
+				// recurring:{type: "subsequent", reference: "rZr3hDIyOKCr", "initiator": "cardholder"}
+				//  target: "https://ptsv2.com/t/dpsjf-1663149519/post"
 			}
 			authorize()
 		}
@@ -82,12 +92,16 @@
 				method: "POST",
 				headers: new Headers(
 					{
+						"Access-Control-Allow-Origin": "*",
+						"Access-Control-Allow-Headers": "*",
 						Authorization: key,
-						"Content-Type": "application/json"
+						"Content-Type": "application/json",
+						"idempotencyKey": idempotency
 					}),
 				body: JSON.stringify(body),
 			}
 			)
+			// idempotency = response.headers.get("Idempotency-Key")
 			return [response.status, response.headers.get("Content-Type")?.startsWith("application/json") ? await response.json() : await response.text()]
 		}
 	</script>
@@ -97,7 +111,7 @@
 	<iframe id="verification" class="hidden"></iframe>
 	<form method="post">
 		<label for="key">Public API key</label>
-		<input type="text" id="key" name="key" />
+		<input type="text" id="key" name="key" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjcwNzEiLCJpYXQiOjE2NDY3NDg4MjMsIm5hbWUiOiJ0ZXN0dGVzdCIsInR5cGUiOiJ0ZXN0Iiwic3ViIjoiZXNNek4zb3giLCJhdWQiOiJwdWJsaWMiLCJmZWF0dXJlcyI6IiIsInVybCI6Imh0dHBzOi8vZXhhbXBsZS5jb20iLCJjYXJkIjp7ImFjcXVpcmVyIjoiMkdFMjVVMnd3YWNTYnFvNTV0R2EyUml2RVp0UzI0ZmZYZDk0SFNPZTlKS2gwLWxCNTNOTk9TUkpsY3Ntd3FYZ0QyZ2xUVGpQUl9Bc2VRaHhoS2VLTUNKd2NtOTBiMk52YkNJNkltbHVkR1Z5WjJseWJ5SXNJblZ5YkNJNkltaDBkSEJ6T2k4dlpHVjJMbWxuWVdOeExtTnZiUzkyTVNKOSIsImNvdW50cnkiOiJTRSIsImRlc2NyaXB0b3IiOiJ0ZXN0IHRyYW5zYWN0aW9uIiwiZW12M2QiOiJQS2p0SWUyeW1BeklXTUpOY1VJTGZIQU9wcHhQLUJSNVFlSlJiaDZCaU1PSkFJanR1UWRHbHBiOGcyb1hkVWVib0l4S2JOcWNfQXpXc2JvamMtMjlnQ0lzSW5WeWJDSTZJbWgwZEhCek9pOHZjMlZ5ZG1salpTNXpZVzVrWW05NExqTmtjMlZqZFhKbExtbHZJbjBzZXlKclpYa2lPaUp1YnkxclpYa2lMQ0p3Y205MGIyTnZiQ0k2SW1Ob00yUXhJaXdpZFhKc0lqb2lhSFIwY0hNNkx5OWhjR2t1WTJGeVpHWjFibU11WTI5dEwyTm9NMlF4YzJsdEluMWQiLCJtY2MiOiIxMjM0IiwibWlkIjoiODEwMzAwMDExMSIsInVybCI6Imh0dHBzOi8vZGV2LmlnYWNxLmNvbS92MSJ9LCJhZ2VudCI6Im1hc3RlciJ9.A-EFvXXUGDNn3n6E0_ACOenB1t7tK8jbOYap9PUa0fo" />
 		<label for="pan">PAN</label>
 		<input type="text" id="pan" name="pan" value="4111111111111111" />
 		<label for="csc">CSC</label>
