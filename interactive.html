@@ -92,11 +92,9 @@
 				method: "POST",
 				headers: new Headers(
 					{
-						"Access-Control-Allow-Origin": "*",
-						"Access-Control-Allow-Headers": "*",
 						Authorization: key,
 						"Content-Type": "application/json",
-						"idempotencyKey": idempotency
+						"Idempotency-Key": idempotency
 					}),
 				body: JSON.stringify(body),
 			}
