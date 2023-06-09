@@ -28,7 +28,7 @@
 		const baseUrl = "https://dev.igacq.com/v1"
 		let authorization
 		let verification
-		function submit() {
+		function submit(challenge, fail) {
 			authorization = {
 				"number": generateUnique(), // "Should be your unique authorization number"
 				"items": Number(document.getElementById("amount").value),
@@ -39,20 +39,21 @@
 						Number(document.getElementById("expires").value.split("/")[0]),
 						Number(document.getElementById("expires").value.split("/")[1])
 					],
-					"csc": document.getElementById("csc").value
+					"csc": document.getElementById("csc").value,
+					"verification": {
+						"type": challenge? "challenge": "method",
+						"data": {
+							"authenticationValue": "test",
+							"dsTransID": "test",
+							"messageVersion": "2.1.0" ,
+							"messageType": challenge ? "RReq" : "ARes",   
+							"eci": "05",
+							"threeDSServerTransID": "test",
+							"transStatus": fail? "N":"Y" 
+						}
+					}
 				},
-				browser: { parent: window.location.origin }
-			}
-			verification = {
-				"number": authorization.number,
-				"items": authorization.items,
-				"currency": authorization.currency,
-				"card": {
-					"pan": authorization.card.pan,
-					"expires": authorization.card.expires,
-					"csc": authorization.card.csc
-				},
-				browser: { parent: window.location.origin }
+				browser: { parent: window.location.origin,ip: "123", "ipCountry": "SE" }
 			}
 			authorize(authorization)
 		}
@@ -98,49 +99,6 @@
 			return [response.status, response.headers.get("Content-Type")?.startsWith("application/json") ? await response.json() : await response.text()]
 		}
 
-
-
-		// Function used in this example to perform 3D. A public api key with 3D configurations is needed to test this example.
-		async function perform3d() {
-			const [status, body] = await post(baseUrl + "/verification?method=GET", document.getElementById("key").value.trim(), verification)
-			const iframe = document.getElementById("verification")
-			switch (status) {
-				case 201:
-					authorization.card.verification = body
-					iframe.classList.remove("visible")
-					iframe.classList.add("hidden")
-					await authorize(authorization)
-					break
-				case 400:
-					if (body.error == "verification required") {
-						iframe.classList.replace("hidden", body.content.details.visible ? "visible" : "hidden")
-						iframe.src = body.content.details.url + "&parent=" + encodeURIComponent(window.location.origin)
-					} else
-						alert("failed: " + JSON.stringify(body))
-					break
-				default:
-					alert("failed: " + JSON.stringify(body))
-					break
-			}
-		}
-
-		// EventListener used to receive data from the 3D process used in this example. 
-		window.addEventListener("message", async e => {
-			if (e.data.destination == "parent" && e.data.content.name == "card") {
-				const response = JSON.parse(atob(e.data.content.value.split(".")[1]))
-				if (response.ver.type != "guard") {
-					verification.card = e.data.content.value
-					await perform3d()
-				}
-				const iframe = document.getElementById("verification")
-				iframe.class = "hidden"
-			} else if (e.data.destination == "parent" && e.data.content.name == "verification") {
-				verification.card.verification = JSON.parse(e.data.content.value)
-				await perform3d()
-			}
-
-		})
-
 	</script>
 </head>
 
@@ -155,12 +113,14 @@
 		<input type="text" id="expires" name="expires" placeholder="MM/YY" value="3/33" />
 		<label for="amount">Amount</label>
 		<input type="text" id="amount" name="amount" value="250" />
-		<label for="no3dKey">No3d Key</label>
-		<input type="text" id="no3dKey" name="no3dKey" />
-		<label for="key">3d Key</label>
-		<input type="text" id="key" name="key" />
+		<label for="no3dKey">Key with external 3d setup</label>
+		<input type="text" id="no3dKey" name="no3dKey" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjcwNzEiLCJpYXQiOjE2NDY3NDg4MjMsIm5hbWUiOiJFeHRlcm5hbCBUZXN0IE1lcmNoYW50IiwidHlwZSI6InRlc3QiLCJzdWIiOiItMWxIcTNUNCIsImF1ZCI6InB1YmxpYyIsImZlYXR1cmVzIjoiIiwidXJsIjoiaHR0cHM6Ly9leGFtcGxlLmNvbSIsImNhcmQiOnsiYWNxdWlyZXIiOiI5Y0FucDJfc0dncHVJTkNQNmRwbnVnYjByMmFONUxjcWR1VHVZbHVNYkkyY08wVjBzUGQyVTNiUkZjQU9mRHhvYVNlRVEtMG9FbVlVNXhrN1Y1NzZnWEV1WTI5dEwzWXhJbjAiLCJ1cmwiOiJodHRwczovL2Rldi5pZ2FjcS5jb20vdjEifSwiYWdlbnQiOiJtYXN0ZXIifQ.t_B0GmTEttOAqvYlcTJJtwTE7i4aMTzkXbZlCDWHaSY" />
+		
 	</form>
-	<button onclick="submit()">Submit</button>
+	<button onclick="submit(false)">Submit frictionless</button>
+	<button onclick="submit(true)">Submit challenge</button>
+	<button onclick="submit(true, true)">Submit fail 3d</button>
+
 </body>
 
 </html>
