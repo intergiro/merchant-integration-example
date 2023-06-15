@@ -31,7 +31,7 @@
 		function submit() {
 			authorization = {
 				"number": generateUnique(), // "Should be your unique authorization number"
-				"items": Number(document.getElementById("amount").value),
+				"amount": Number(document.getElementById("amount").value),
 				"currency": "EUR",
 				"card": {
 					"pan": document.getElementById("pan").value,
