@@ -40,7 +40,8 @@
 					],
 					"csc": document.getElementById("csc").value
 				},
-				browser: { parent: window.location.origin }
+				browser: { parent: window.location.origin },
+                target: "https://merchant.igacq.com/v1/integration-example"
 			}
 			authorize()
 		}
@@ -51,7 +52,7 @@
                 authorization.card.verification = body
                 iframe.classList.remove("visible")
                 iframe.classList.add("hidden")
-                alert("sucess: " + JSON.stringify(body, null, 2))
+                alert("success: " + JSON.stringify(body, null, 2))
             }
             else if (status == 400 && body.error == "verification required") {
                 authorization.id = body.id
