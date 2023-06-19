@@ -30,7 +30,7 @@
 		function submit() {
 			authorization = {
 				"number": generateUnique(), // "Should be your unique authorization number"
-				"items": Number(document.getElementById("amount").value),
+				"amount": Number(document.getElementById("amount").value),
 				"currency": "EUR",
 				"card": {
 					"pan": document.getElementById("pan").value,
@@ -57,21 +57,24 @@
 		async function authorize() {
 			const [status, body] = await post(baseUrl + "/authorization", "Bearer " + document.getElementById("key").value.trim(), authorization)
 			const iframe = document.getElementById("verification")
-            const form = document.getElementById("threeD")
-            const creq = document.getElementById("creq")
-
             if (status == 201) {
                 authorization.card.verification = body
                 iframe.classList.remove("visible")
                 iframe.classList.add("hidden")
-                alert("sucess: " + JSON.stringify(body, null, 2))
+                alert("success: " + JSON.stringify(body, null, 2))
             }
             else if (status == 400 && body.error == "verification required") {
                 authorization.id = body.id
                 iframe.classList.replace("hidden", body.content.details.visible ? "visible" : "hidden")
-				form.action = body.content.details.url
-				creq.value = btoa(JSON.stringify(body.content.details.data))
-				form.submit()
+                if (body.content.details.method == "GET") 
+                    iframe.src = body.content.details.url
+                else {
+                    const form = document.getElementById("threeD")
+                    const creq = document.getElementById("creq")
+                    form.action = body.content.details.url
+                    creq.value = btoa(JSON.stringify(body.content.details.data))
+                    form.submit()
+                }
             }
             else 
                 alert("failed: " + JSON.stringify(body))
@@ -91,10 +94,10 @@
 				method: "POST",
 				headers: new Headers(
 					{
-						...(key ? {Authorization: key}:{}),
-						"Content-Type": typeof body == "string" ? "application/x-www-form-urlencoded" : "application/json"
+						Authorization: key,
+						"Content-Type": "application/json"
 					}),
-				body: typeof body == "string" ?body: JSON.stringify(body),
+				body: JSON.stringify(body),
 			}
 			)
 			return [response.status, response.headers.get("Content-Type")?.startsWith("application/json") ? await response.json() : await response.text()]

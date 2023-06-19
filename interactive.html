@@ -30,7 +30,7 @@
 		function submit() {
 			authorization = {
 				"number": generateUnique(), // "Should be your unique authorization number"
-				"items": Number(document.getElementById("amount").value),
+				"amount": Number(document.getElementById("amount").value),
 				"currency": "EUR",
 				"card": {
 					"pan": document.getElementById("pan").value,
@@ -52,7 +52,7 @@
 					authorization.card.verification = body
 					iframe.classList.remove("visible")
 					iframe.classList.add("hidden")
-					alert("sucess: " + JSON.stringify(body))
+					alert("success: " + JSON.stringify(body))
 					break
 				case 400:
 					if (body.error == "verification required" && body.content.details.method == "GET") {
