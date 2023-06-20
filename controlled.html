@@ -40,8 +40,16 @@
 					],
 					"csc": document.getElementById("csc").value
 				},
-				browser: { parent: window.location.origin },
-                target: "https://merchant.igacq.com/v1/integration-example"
+				browser: { 
+					parent: window.location.origin, 
+					ipCountry: "SE", 
+					colorDepth: 32, 
+					java: false, 
+					javascript:true, 
+					locale: "nb-NO", 
+					timezone: -120,
+					resolution: [430, 932] 
+				}			
 			}
 			authorize()
 		}
