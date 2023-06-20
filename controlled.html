@@ -40,7 +40,16 @@
 					],
 					"csc": document.getElementById("csc").value
 				},
-				browser: { parent: window.location.origin }
+				browser: { 
+					parent: window.location.origin, 
+					ipCountry: "SE", 
+					colorDepth: 32, 
+					java: false, 
+					javascript:true, 
+					locale: "nb-NO", 
+					timezone: -120,
+					resolution: [430, 932] 
+				}			
 			}
 			authorize()
 		}
@@ -59,13 +68,9 @@
             else if (status == 400 && body.error == "verification required") {
                 authorization.id = body.id
                 iframe.classList.replace("hidden", body.content.details.visible ? "visible" : "hidden")
-                if (body.content.details.method == "GET") 
-                    iframe.src = body.content.details.url
-                else {
-                    form.action = body.content.details.url
-                    creq.value = btoa(JSON.stringify(body.content.details.data))
-                    form.submit()
-                }
+				form.action = body.content.details.url
+				creq.value = btoa(JSON.stringify(body.content.details.data))
+				form.submit()
             }
             else 
                 alert("failed: " + JSON.stringify(body))
