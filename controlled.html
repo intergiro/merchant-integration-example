@@ -40,43 +40,44 @@
 					],
 					"csc": document.getElementById("csc").value
 				},
-				browser: { 
-					parent: window.location.origin, 
-					ipCountry: "SE", 
-					colorDepth: 32, 
-					java: false, 
-					javascript:true, 
-					locale: "nb-NO", 
+				browser: {
+					parent: window.location.origin,
+					ip: "123.100.227.123",
+					ipCountry: "SE",
+					colorDepth: 32,
+					java: false,
+					javascript: true,
+					locale: "nb-NO",
 					timezone: -120,
-					resolution: [430, 932] 
-				}			
+					resolution: [430, 932]
+				}
 			}
 			authorize()
 		}
 		async function authorize() {
 			const [status, body] = await post(baseUrl + "/authorization", "Bearer " + document.getElementById("key").value.trim(), authorization)
 			const iframe = document.getElementById("verification")
-            if (status == 201) {
-                authorization.card.verification = body
-                iframe.classList.remove("visible")
-                iframe.classList.add("hidden")
-                alert("success: " + JSON.stringify(body, null, 2))
-            }
-            else if (status == 400 && body.error == "verification required") {
-                authorization.id = body.id
-                iframe.classList.replace("hidden", body.content.details.visible ? "visible" : "hidden")
-                if (body.content.details.method == "GET") 
-                    iframe.src = body.content.details.url
-                else {
-                    const form = document.getElementById("threeD")
-                    const creq = document.getElementById("creq")
-                    form.action = body.content.details.url
-                    creq.value = btoa(JSON.stringify(body.content.details.data))
-                    form.submit()
-                }
-            }
-            else 
-                alert("failed: " + JSON.stringify(body))
+			if (status == 201) {
+				authorization.card.verification = body
+				iframe.classList.remove("visible")
+				iframe.classList.add("hidden")
+				alert("success: " + JSON.stringify(body, null, 2))
+			}
+			else if (status == 400 && body.error == "verification required") {
+				authorization.id = body.id
+				iframe.classList.replace("hidden", body.content.details.visible ? "visible" : "hidden")
+				if (body.content.details.method == "GET")
+					iframe.src = body.content.details.url
+				else {
+					const form = document.getElementById("threeD")
+					const creq = document.getElementById("creq")
+					form.action = body.content.details.url
+					creq.value = btoa(JSON.stringify(body.content.details.data))
+					form.submit()
+				}
+			}
+			else
+				alert("failed: " + JSON.stringify(body))
 		}
 
 		window.addEventListener("message", async e => {
@@ -106,12 +107,12 @@
 
 <body style="width: 100%; max-width: 20em; margin-left: auto; margin-right: auto;">
 	<iframe id="verification" name="verification" class="hidden"></iframe>
-    <form id="threeD" method="post" target="verification" class="hidden">
-        <input id="creq" name="creq">
-    </form>
+	<form id="threeD" method="post" target="verification" class="hidden">
+		<input id="creq" name="creq">
+	</form>
 	<form method="post">
 		<label for="key">Public API key</label>
-		<input type="text" id="key" name="key"/>
+		<input type="text" id="key" name="key" />
 		<label for="pan">PAN</label>
 		<input type="text" id="pan" name="pan" value="4111111111111111" />
 		<label for="csc">CSC</label>
