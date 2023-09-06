@@ -27,12 +27,12 @@
 		initialize()
 	});
 	function submit() {
-		authorization = {
+	authorization = {
 			"number": generateUnique(), // "Should be your unique authorization number"
 			"amount": Number(document.getElementById("amount").value),
 			"currency": "EUR",
 			"card": {
-				"pan": document.getElementById("pan").value,
+				"pan": document.getElementById("pan2").value,
 				"expires": [
 					Number(document.getElementById("expires").value.split("/")[0]),
 					Number(document.getElementById("expires").value.split("/")[1])
@@ -41,11 +41,11 @@
 			},
 			target: "https://merchant.igacq.com/v1/integration-example",
 			"billingAddress": {
-   			 "street": "Ringgatan 20",
-   			 "zipCode": "75217",
-  			  "city": "Uppsala",
-   			 "countryCode": "SE"
- 			 }
+   				"street":document.getElementById("street").value,
+   				"zipCode": document.getElementById("zipcode").value,
+  				"city": document.getElementById("city").value,
+   				"countryCode": document.getElementById("country").value
+ 			}
 		}
 		authorize()
 	}
@@ -72,16 +72,27 @@
 	</form>
 	<form method="post">
 		<label for="key">Public API key</label>
-		<input type="text" id="api-key" name="key" />
-		<label for="pan">PAN</label>
-		<input type="text" id="pan" name="pan" value="4111111111111111" />
+		<input type="text" id="api-key" name="key"/>
+		<label for="pan2">PAN</label>
+		<input type="text" id="pan2" name="pan2"/>
 		<label for="csc">CSC</label>
-		<input type="text" id="csc" name="csc" value="987" />
+		<input type="text" id="csc" name="csc"/>
 		<label for="expires">Expires</label>
-		<input type="text" id="expires" name="expires" placeholder="MM/YY" value="1/32" />
+		<input type="text" id="expires" name="expires" placeholder="MM/YY" />
 		<label for="amount">Amount</label>
-		<input type="text" id="amount" name="amount" value="250" />
+		<input type="text" id="amount" name="amount" value="1" />
+		<br>
+		<h3>Billing Address</h3>
+		<label for="city">City</label>
+		<input type="text" id="city" name="city" />
+		<label for="street">Street</label>
+		<input type="text" id="street" name="street"/>
+		<label for="zipcode">Postal code (no spaces)</label>
+		<input type="text" id="zipcode" name="zipcode" />
+		<label for="country">Alpha2 Country code (such as SE, UK)</label>
+		<input type="text" id="country" name="country" />
 	</form>
+	<br>
 	<button onclick="submit()">Submit</button>
 	<iframe id="verification" name="verification"></iframe>
 </body>
