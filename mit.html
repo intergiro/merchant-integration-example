@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
+	<meta http-equiv="x-ua-compatible" content="IE=Edge">
+	<title>Verification Example</title>
+	<script type="text/javascript" src="./utilities.js"></script>
+	<style>
+		.hidden {
+			display: none;
+		}
+	
+		.visible {
+			display: block;
+		}
+		iframe.visible {
+			border: none;
+			height: 70vh;
+			width: 90vw;
+			max-width: 40em;
+			outline: 1px solid red;
+		}
+
+		input {
+			display: block;
+		}
+		
+	</style>
+	<script>
+		const baseUrl = "https://merchant.intergiro.com/v1"
+		let key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2FwaS5wYXlmdW5jLmNvbSIsImlhdCI6MTY2MzMyNjU1MCwibmFtZSI6IkludGVybmFsIFNGIFNFIiwidHlwZSI6ImxpdmUiLCJ1cmwiOiJodHRwczovL2ludGVyZ2lyby5jb20iLCJlbWFpbCI6ImY4OWs5V1VFcGlVbnBfTVhxQmgwcGhQbzJiSEdQNXdfNm16ZE1pbkpiYVJ0OUtNTENLajBxVmtuQ1NfbGZxVUMyd04yVUNoR0Y5NHN0YW9McVktRXoyZHBMWGw0TTNCck5YQkRkVUVpTENKdWIzUnBabmtpT2lJaWZRIiwiY2FyZCI6eyJhY3F1aXJlciI6InN2TFp2dF9Fc3VDS3lMOGUyR0x3Z1VuSlp5OWprdlEzQllnMVluMjR3V2piMjFBMmt1R3IwcGQtcGJGSkllQkpMaEJvVDZ1SDlrdFE2eXlTdU1UYUhpSndjbTkwYjJOdmJDSTZJbWx1ZEdWeVoybHlieUlzSW5WeWJDSTZJbWgwZEhCek9pOHZZWEJwTG5CaGVXWjFibU11WTI5dEluMCIsImNvdW50cnkiOiJTRSIsImRlc2NyaXB0b3IiOiJTRi1MaXZlVGVzdC1TRSIsImVtdjNkIjoibnhYWXZfTmJYbTROVnZVWFpWZlQ1NmticW0wcDBzaDZ6bTF5VmRWcm9fSmFwMW9QV1BfeHVnIiwibWNjIjoiNzM3MiIsIm1pZCI6IjAwMDAwMDAwMDAwMDAwMSIsInVybCI6Imh0dHBzOi8vYXBpLnBheWZ1bmMuY29tIn0sInN1YiI6IlpfajR2ZHJSIiwiYWdlbnQiOiJQYXlGdW5jIiwiYXVkIjoicHVibGljIiwiZmVhdHVyZXMiOiJkZWZlckFsbG93ZWQgZW1haWxPcHRpb24iLCJpZCI6IlpfajR2ZHJSIn0.fhczMIytynjHxrhL5UV8EAMMv3BUrVWyEJeU_DJQp2Q"
+		let authorization
+		function submit() {
+			authorization = {
+			"number": generateUnique(), // "Should be your unique authorization number"
+			"amount": document.getElementById("amount").value,
+			"currency": document.getElementById("currency").value.toUpperCase(),
+			"card": {
+				"pan": document.getElementById("pan").value,
+				"expires": [
+					Number(document.getElementById("expires").value.split("/")[0]),
+					Number(document.getElementById("expires").value.split("/")[1])
+				],
+				"csc": document.getElementById("csc").value
+			},
+			"recurring": {type: "subsequent", "reference": document.getElementById("reference").value, "initiator": "merchant"},
+			browser: { parent: window.location.origin }
+		}
+			authorize()
+		}
+		async function authorize() {
+			const [status, body] = await post(baseUrl + "/authorization?method=GET", "Bearer " + key.trim(), authorization)
+			const iframe = document.getElementById("verification")
+
+			switch (status) {
+				case 201:
+					authorization.card.verification = body
+					iframe.classList.remove("visible")
+					iframe.classList.add("hidden")
+					alert("success: " + JSON.stringify(body,null,2))
+					break
+				case 400:
+					if (body.error == "verification required" && body.content.details.method == "GET") {
+						iframe.classList.replace("hidden", body.content.details.visible ? "visible" : "hidden")
+						iframe.src = body.content.details.url
+						authorization.id = body.id
+					} else
+						alert("failed: " + JSON.stringify(body))
+					break
+				default:
+					alert("failed: " + JSON.stringify(body))
+					break
+			}
+		}
+
+		window.addEventListener("message", async e => {
+			if (e.data.destination == "parent" && e.data.content.name == "card") {
+				authorization.card = e.data.content.value
+				const iframe = document.getElementById("verification")
+				iframe.class = "hidden"
+				await authorize()
+			}
+
+		})
+		async function post(url, key, body) {
+			const response = await fetch(url, {
+				method: "POST",
+				headers: new Headers(
+					{
+						Authorization: key,
+						"Content-Type": "application/json",
+						"accept": "application/json"
+					}),
+				body: JSON.stringify(body),
+			}
+			)
+			return [response.status, response.headers.get("Content-Type")?.startsWith("application/json") ? await response.json() : await response.text()]
+		}
+	</script>
+</head>
+
+<body style="width: 100%; max-width: 20em; margin-left: auto; margin-right: auto;">
+	<iframe id="verification" class="hidden"></iframe>
+	<form method="post">
+		<label for="pan">PAN</label>
+		<input type="text" id="pan" name="pan" />
+		<label for="csc">CSC</label>
+		<input type="text" id="csc" name="csc" />
+		<label for="expires">Expires</label>
+		<input type="text" id="expires" name="expires" placeholder="MM/YY"  />
+        <label for="amount">Amount</label>
+		<input type="amount" id="amount" />
+		<label for="currency">Currency</label>
+		<input type="currency" id="currency" />
+        <label for="reference">Initial Reference</label>
+		<input type="reference" id="reference" />
+	</form>
+	<button onclick="submit()">Submit</button>
+</body>
+
+</html>
