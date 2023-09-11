@@ -37,6 +37,7 @@
 			"number": generateUnique(), // "Should be your unique authorization number"
 			"amount": document.getElementById("amount").value,
 			"currency": document.getElementById("currency").value.toUpperCase(),
+            "capture": "auto",
 			"card": {
 				"pan": document.getElementById("pan").value,
 				"expires": [
