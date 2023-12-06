@@ -16,7 +16,8 @@
 		max-width: 40em;
 	}
 
-	input {
+	input:not([type=checkbox]),
+	select {
 		display: block;
 	}
 </style>
@@ -30,14 +31,15 @@
 		authorization = {
 			"number": generateUnique(), // "Should be your unique authorization number"
 			"amount": Number(document.getElementById("amount").value),
-			"currency": "EUR",
+			"currency": document.getElementById("currency").value,
 			"card": {
 				"pan": document.getElementById("pan").value,
 				"expires": [
 					Number(document.getElementById("expires").value.split("/")[0]),
 					Number(document.getElementById("expires").value.split("/")[1])
 				],
-				"csc": document.getElementById("csc").value
+				"csc": document.getElementById("csc").value,
+				"category": document.getElementById("category").value,
 			},
 			target: "https://merchant.igacq.com/v1/integration-example"
 		}
@@ -73,8 +75,49 @@
 		<input type="text" id="csc" name="csc" value="987" />
 		<label for="expires">Expires</label>
 		<input type="text" id="expires" name="expires" placeholder="MM/YY" value="1/32" />
+		<input type="checkbox" id="autCapture" name="autCapture" checked />
+		<label for="autCapture">Auto Capture</label><br />
+		<label for="category">Category</label>
+		<select id="category" name="category">
+			<option value="purchase">purchase</option>
+			<option value="withdrawal">withdrawal</option>
+			<option value="payout">payout</option>
+			<option value="account-to-account">account-to-account</option>
+			<option value="person-to-person">person-to-person</option>
+			<option value="topup">topup</option>
+			<option value="tip">tip</option>
+		</select>
+		<label for="currency">Currency</label>
+		<input type="text" id="currency" name="currency" value="EUR" />
 		<label for="amount">Amount</label>
 		<input type="text" id="amount" name="amount" value="250" />
+		<fieldset class="sender">
+			<legend>Sender</legend>
+			<label for="senderFirstName">First Name</label>
+			<input type="text" id="senderFirstName" name="senderFirstName" value="Jane" />
+			<label for="senderLastName">Last Name</label>
+			<input type="text" id="senderLastName" name="senderLastName" value="Doe" />
+			<label for="senderCity">City</label>
+			<input type="text" id="senderCity" name="senderCity" value="Stockholm" />
+			<label for="senderCountyCode">CountryCode</label>
+			<input type="text" id="senderCountyCode" name="senderCountyCode" value="SE" />
+			<label for="senderStreet">Street</label>
+			<input type="text" id="senderStreet" name="senderStreet" value="Street" />
+			<label for="senderZipCode">Zip Code</label>
+			<input type="text" id="senderZipCode" name="senderZipCode" value="75324" />
+			<label for="senderAccountType">Account Type</label>
+			<select id="senderAccountType" name="senderAccountType">
+				<option value="card">card</option>
+				<option value="bic">bic</option>
+				<option value="iban">iban</option>
+				<option value="cash">cash</option>
+				<option value="wallet">wallet</option>
+			</select>
+			<label for="senderAccountNumber">Account Number</label>
+			<input type="text" id="senderAccountNumber" name="senderAccountNumber" value="4111111111111111" />
+		</fieldset>
+		<input type="checkbox" id="sameReceiver" name="sameReceiver" checked />
+		<label for="sameReceiver">Same Receiver</label>
 	</form>
 	<button onclick="submit()">Submit</button>
 	<iframe id="verification" name="verification"></iframe>
