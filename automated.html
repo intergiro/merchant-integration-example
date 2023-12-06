@@ -7,6 +7,7 @@
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title></title>
 	<script type="text/javascript" src="./utilities.js"></script>
+	<script type="text/javascript" src="./input-fields.js" defer></script>
 </head>
 <style>
 	iframe {
@@ -28,6 +29,7 @@
 		initialize()
 	});
 	function submit() {
+		const category = document.getElementById("category").value
 		authorization = {
 			"number": generateUnique(), // "Should be your unique authorization number"
 			"amount": Number(document.getElementById("amount").value),
@@ -76,7 +78,7 @@
 		<label for="expires">Expires</label>
 		<input type="text" id="expires" name="expires" placeholder="MM/YY" value="1/32" />
 		<input type="checkbox" id="autCapture" name="autCapture" checked />
-		<label for="autCapture">Auto Capture</label><br />
+		<label for="auto-capture">Auto Capture</label><br />
 		<label for="category">Category</label>
 		<select id="category" name="category">
 			<option value="purchase">purchase</option>
@@ -91,33 +93,60 @@
 		<input type="text" id="currency" name="currency" value="EUR" />
 		<label for="amount">Amount</label>
 		<input type="text" id="amount" name="amount" value="250" />
-		<fieldset class="sender">
-			<legend>Sender</legend>
-			<label for="senderFirstName">First Name</label>
-			<input type="text" id="senderFirstName" name="senderFirstName" value="Jane" />
-			<label for="senderLastName">Last Name</label>
-			<input type="text" id="senderLastName" name="senderLastName" value="Doe" />
-			<label for="senderCity">City</label>
-			<input type="text" id="senderCity" name="senderCity" value="Stockholm" />
-			<label for="senderCountyCode">CountryCode</label>
-			<input type="text" id="senderCountyCode" name="senderCountyCode" value="SE" />
-			<label for="senderStreet">Street</label>
-			<input type="text" id="senderStreet" name="senderStreet" value="Street" />
-			<label for="senderZipCode">Zip Code</label>
-			<input type="text" id="senderZipCode" name="senderZipCode" value="75324" />
-			<label for="senderAccountType">Account Type</label>
-			<select id="senderAccountType" name="senderAccountType">
-				<option value="card">card</option>
-				<option value="bic">bic</option>
-				<option value="iban">iban</option>
-				<option value="cash">cash</option>
-				<option value="wallet">wallet</option>
-			</select>
-			<label for="senderAccountNumber">Account Number</label>
-			<input type="text" id="senderAccountNumber" name="senderAccountNumber" value="4111111111111111" />
-		</fieldset>
-		<input type="checkbox" id="sameReceiver" name="sameReceiver" checked />
-		<label for="sameReceiver">Same Receiver</label>
+		<div class="sender-reciever" hidden>
+			<fieldset class="sender">
+				<legend>Sender</legend>
+				<label for="sender-first-name">First Name</label>
+				<input type="text" id="sender-first-name" name="sender-first-name" value="Jane" />
+				<label for="sender-last-name">Last Name</label>
+				<input type="text" id="sender-last-name" name="sender-last-name" value="Doe" />
+				<label for="sender-city">City</label>
+				<input type="text" id="sender-city" name="sender-city" value="Stockholm" />
+				<label for="sender-county-code">CountryCode</label>
+				<input type="text" id="sender-county-code" name="sender-county-code" value="SE" />
+				<label for="sender-street">Street</label>
+				<input type="text" id="sender-street" name="sender-street" value="Street" />
+				<label for="sender-zip-code">Zip Code</label>
+				<input type="text" id="sender-zip-code" name="sender-zip-code" value="75324" />
+				<label for="sender-account-type">Account Type</label>
+				<select id="sender-account-type" name="sender-account-type">
+					<option value="card">card</option>
+					<option value="bic">bic</option>
+					<option value="iban">iban</option>
+					<option value="cash">cash</option>
+					<option value="wallet">wallet</option>
+				</select>
+				<label for="sender-account-number">Account Number</label>
+				<input type="text" id="sender-account-number" name="sender-account-number" value="4111111111111111" />
+			</fieldset>
+			<input type="checkbox" id="same-receiver" name="same-receiver" checked />
+			<label for="same-receiver">Same Receiver</label>
+			<fieldset class="receiver">
+				<legend>Receiver</legend>
+				<label for="receiver-first-name">First Name</label>
+				<input type="text" id="receiver-first-name" name="receiver-first-name" value="Jane" />
+				<label for="receiver-last-name">Last Name</label>
+				<input type="text" id="receiver-last-name" name="receiver-last-name" value="Doe" />
+				<label for="receiver-city">City</label>
+				<input type="text" id="receiver-city" name="receiver-city" value="Stockholm" />
+				<label for="receiver-county-code">CountryCode</label>
+				<input type="text" id="receiver-county-code" name="receiver-county-code" value="SE" />
+				<label for="receiver-street">Street</label>
+				<input type="text" id="receiver-street" name="receiver-street" value="Street" />
+				<label for="receiver-zip-code">Zip Code</label>
+				<input type="text" id="receiver-zip-code" name="receiver-zip-code" value="75324" />
+				<label for="receiver-account-type">Account Type</label>
+				<select id="receiver-account-type" name="receiver-account-type">
+					<option value="card">card</option>
+					<option value="bic">bic</option>
+					<option value="iban">iban</option>
+					<option value="cash">cash</option>
+					<option value="wallet">wallet</option>
+				</select>
+				<label for="receiver-account-number">Account Number</label>
+				<input type="text" id="receiver-account-number" name="sender-account-number" value="4111111111111111" />
+			</fieldset>
+		</div>
 	</form>
 	<button onclick="submit()">Submit</button>
 	<iframe id="verification" name="verification"></iframe>
