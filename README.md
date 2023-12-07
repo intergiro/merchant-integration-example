@@ -1,2 +1,3 @@
-# verification-example
-Example on how to create authorizations with 3d.
+## Intergiro Acquiring API examples
+
+Utilities.js must be included with the html example.

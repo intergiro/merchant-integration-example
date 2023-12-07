@@ -6,6 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
 	<meta http-equiv="x-ua-compatible" content="IE=Edge">
 	<title>Verification Example</title>
+	<script type="text/javascript" src="./utilities.js"></script>
 	<style>
 		iframe.hidden {
 			display: none;
@@ -27,12 +28,11 @@
 		const baseUrl = "https://merchant.intergiro.com/v1"
 		let authorization
 		let verification
-
 		function submit() {
 			authorization = {
-				"number": "Unique-number1",
-				"items": Number(document.getElementById("amount").value),
-				"currency": "EUR",
+				"number": generateUnique(), // "Should be your unique authorization number"
+				"amount": Number(document.getElementById("amount").value),
+				"currency": document.getElementById("currency").value,
 				"card": {
 					"pan": document.getElementById("pan").value,
 					"expires": [
@@ -44,7 +44,7 @@
 				browser: { parent: window.location.origin }
 			}
 			verification = {
-				"number": "Unique-number2",
+				"number": authorization.number,
 				"items": authorization.items,
 				"currency": authorization.currency,
 				"card": {
@@ -153,6 +153,8 @@
 		<input type="text" id="csc" name="csc" value="987" />
 		<label for="expires">Expires</label>
 		<input type="text" id="expires" name="expires" placeholder="MM/YY" value="3/33" />
+		<label for="currency">Currency</label>
+		<input type="text" id="currency" name="currency" value="EUR" />
 		<label for="amount">Amount</label>
 		<input type="text" id="amount" name="amount" value="250" />
 		<label for="no3dKey">No3d Key</label>

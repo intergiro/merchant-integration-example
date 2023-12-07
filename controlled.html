@@ -8,11 +8,11 @@
 	<title>Verification Example</title>
 	<script type="text/javascript" src="./utilities.js"></script>
 	<style>
-		iframe.hidden {
+		.hidden {
 			display: none;
 		}
 
-		iframe.visible {
+		.visible {
 			border: none;
 			height: 70vh;
 			width: 90vw;
@@ -31,7 +31,7 @@
 			authorization = {
 				"number": generateUnique(), // "Should be your unique authorization number"
 				"amount": Number(document.getElementById("amount").value),
-				"currency": "EUR",
+				"currency": document.getElementById("currency").value,
 				"card": {
 					"pan": document.getElementById("pan").value,
 					"expires": [
@@ -40,32 +40,44 @@
 					],
 					"csc": document.getElementById("csc").value
 				},
-				browser: { parent: window.location.origin }
+				browser: {
+					parent: window.location.origin,
+					ip: "123.100.227.123",
+					ipCountry: "SE",
+					colorDepth: 32,
+					java: false,
+					javascript: true,
+					locale: "nb-NO",
+					timezone: -120,
+					resolution: [430, 932]
+				}
 			}
 			authorize()
 		}
 		async function authorize() {
-			const [status, body] = await post(baseUrl + "/authorization?method=GET", "Bearer " + document.getElementById("key").value.trim(), authorization)
+			const [status, body] = await post(baseUrl + "/authorization", "Bearer " + document.getElementById("key").value.trim(), authorization)
 			const iframe = document.getElementById("verification")
-			switch (status) {
-				case 201:
-					authorization.card.verification = body
-					iframe.classList.remove("visible")
-					iframe.classList.add("hidden")
-					alert("success: " + JSON.stringify(body))
-					break
-				case 400:
-					if (body.error == "verification required" && body.content.details.method == "GET") {
-						iframe.classList.replace("hidden", body.content.details.visible ? "visible" : "hidden")
-						iframe.src = body.content.details.url
-						authorization.id = body.id
-					} else
-						alert("failed: " + JSON.stringify(body))
-					break
-				default:
-					alert("failed: " + JSON.stringify(body))
-					break
+			if (status == 201) {
+				authorization.card.verification = body
+				iframe.classList.remove("visible")
+				iframe.classList.add("hidden")
+				alert("success: " + JSON.stringify(body, null, 2))
 			}
+			else if (status == 400 && body.error == "verification required") {
+				authorization.id = body.id
+				iframe.classList.replace("hidden", body.content.details.visible ? "visible" : "hidden")
+				if (body.content.details.method == "GET")
+					iframe.src = body.content.details.url
+				else {
+					const form = document.getElementById("threeD")
+					const creq = document.getElementById("creq")
+					form.action = body.content.details.url
+					creq.value = btoa(JSON.stringify(body.content.details.data))
+					form.submit()
+				}
+			}
+			else
+				alert("failed: " + JSON.stringify(body))
 		}
 
 		window.addEventListener("message", async e => {
@@ -94,7 +106,10 @@
 </head>
 
 <body style="width: 100%; max-width: 20em; margin-left: auto; margin-right: auto;">
-	<iframe id="verification" class="hidden"></iframe>
+	<iframe id="verification" name="verification" class="hidden"></iframe>
+	<form id="threeD" method="post" target="verification" class="hidden">
+		<input id="creq" name="creq">
+	</form>
 	<form method="post">
 		<label for="key">Public API key</label>
 		<input type="text" id="key" name="key" />
@@ -104,6 +119,8 @@
 		<input type="text" id="csc" name="csc" value="987" />
 		<label for="expires">Expires</label>
 		<input type="text" id="expires" name="expires" placeholder="MM/YY" value="2/24" />
+		<label for="currency">Currency</label>
+		<input type="text" id="currency" name="currency" value="EUR" />
 		<label for="amount">Amount</label>
 		<input type="text" id="amount" name="amount" value="250" />
 	</form>
