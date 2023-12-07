@@ -102,11 +102,11 @@
 		<label for="key">Public API key</label>
 		<input type="text" id="api-key" name="key" />
 		<label for="pan">PAN</label>
-		<input type="text" id="pan" name="pan" value="4111111111111111" />
-		<label for="csc">CSC</label>
+		<input type="text" id="pan" name="pan" autocomplete="cc-number" value="4111111111111111" />
+		<label for="csc" autocomplete="cc-csc">CSC</label>
 		<input type="text" id="csc" name="csc" value="987" />
 		<label for="expires">Expires</label>
-		<input type="text" id="expires" name="expires" placeholder="MM/YY" value="1/32" />
+		<input type="text" id="expires" name="expires" autocomplete="cc-exp" placeholder="MM/YY" value="1/32" />
 		<input type="checkbox" id="auto-capture" name="auto-capture" checked />
 		<label for="auto-capture">Auto Capture</label><br />
 		<label for="category">Category</label>
@@ -120,24 +120,25 @@
 			<option value="tip">tip</option>
 		</select>
 		<label for="currency">Currency</label>
-		<input type="text" id="currency" name="currency" value="EUR" />
+		<input type="text" id="currency" name="currency" autocomplete="transaction-currency" value="EUR" />
 		<label for="amount">Amount</label>
-		<input type="text" id="amount" name="amount" value="250" />
+		<input type="text" id="amount" name="amount" autocomplete="transaction-amount" value="250" />
 		<div id="sender-receiver" hidden>
 			<fieldset id="sender">
 				<legend>Sender</legend>
 				<label for="sender-first-name">First Name</label>
-				<input type="text" id="sender-first-name" name="sender-first-name" value="Jane" />
+				<input type="text" id="sender-first-name" name="sender-first-name" autocomplete="cc-given-name" value="Jane" />
 				<label for="sender-last-name">Last Name</label>
-				<input type="text" id="sender-last-name" name="sender-last-name" value="Doe" />
+				<input type="text" id="sender-last-name" name="sender-last-name" autocomplete="cc-family-name" value="Doe" />
 				<label for="sender-city">City</label>
 				<input type="text" id="sender-city" name="sender-city" value="Stockholm" />
 				<label for="sender-country-code">Country Code</label>
-				<input type="text" id="sender-country-code" name="sender-country-code" value="SE" />
+				<input type="text" id="sender-country-code" name="sender-country-code" autocomplete="country" value="SE" />
 				<label for="sender-street">Street</label>
-				<input type="text" id="sender-street" name="sender-street" value="Hammarbyvägen 1" />
+				<input type="text" id="sender-street" name="sender-street" street-address="street-address"
+					value="Hammarbyvägen 1" />
 				<label for="sender-zip-code">Zip Code</label>
-				<input type="text" id="sender-zip-code" name="sender-zip-code" value="75111" />
+				<input type="text" id="sender-zip-code" name="sender-zip-code" autocomplete="postal-code" value="75111" />
 				<label for="sender-account-type">Account Type</label>
 				<select id="sender-account-type" name="sender-account-type">
 					<option value="card">card</option>
@@ -154,17 +155,20 @@
 			<fieldset id="receiver" hidden>
 				<legend>Receiver</legend>
 				<label for="receiver-first-name">First Name</label>
-				<input type="text" id="receiver-first-name" name="receiver-first-name" value="Joe" />
+				<input type="text" id="receiver-first-name" name="receiver-first-name" autocomplete="cc-given-name"
+					value="Joe" />
 				<label for="receiver-last-name">Last Name</label>
-				<input type="text" id="receiver-last-name" name="receiver-last-name" value="Doe" />
+				<input type="text" id="receiver-last-name" name="receiver-last-name" autocomplete="cc-family-name"
+					value="Doe" />
 				<label for="receiver-city">City</label>
 				<input type="text" id="receiver-city" name="receiver-city" value="Uppsala" />
-				<label for="receiver-country-code">CountryCode</label>
-				<input type="text" id="receiver-country-code" name="receiver-country-code" value="SE" />
+				<label for="receiver-country-code">Country Code</label>
+				<input type="text" id="receiver-country-code" name="receiver-country-code" autocomplete="country" value="SE" />
 				<label for="receiver-street">Street</label>
-				<input type="text" id="receiver-street" name="receiver-street" value="Rackarbergsgatan 2" />
+				<input type="text" id="receiver-street" name="receiver-street" street-address="street-address"
+					value="Rackarbergsgatan 2" />
 				<label for="receiver-zip-code">Zip Code</label>
-				<input type="text" id="receiver-zip-code" name="receiver-zip-code" value="75222" />
+				<input type="text" id="receiver-zip-code" name="receiver-zip-code" autocomplete="postal-code" value="75222" />
 				<label for="receiver-account-type">Account Type</label>
 				<select id="receiver-account-type" name="receiver-account-type">
 					<option value="iban">iban</option>
