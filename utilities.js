@@ -13,9 +13,9 @@ function generateUnique() {
 	return result
 }
 
-function appendTobody(elementType, text) {
+function appendToBody(elementType, text) {
 	const element = document.createElement(elementType)
-	element.textContent = text
+	element.innerText = text
 	document.body.appendChild(element)
 }
 
@@ -26,4 +26,19 @@ function initialize() {
 	document.getElementById("expires").value = `1/${expiryYear}`
 	if (search.get('key'))
 		document.getElementById("api-key").value = search.get('key')
+
+	document.getElementById("category").addEventListener("change", (event) => {
+		const senderReceiverDiv = document.querySelector("div#sender-receiver")
+		if (event.target.value == "account-to-account" || event.target.value == "person-to-person") {
+			senderReceiverDiv.hidden = false
+		} else {
+			senderReceiverDiv.hidden = true
+		}
+	})
+
+	document.getElementById("same-receiver").addEventListener("change", (event) => {
+		const receiverFieldset = document.querySelector("fieldset#receiver")
+		receiverFieldset.hidden = event.target.checked
+	})
+
 }

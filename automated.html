@@ -16,7 +16,8 @@
 		max-width: 40em;
 	}
 
-	input {
+	input:not([type=checkbox]),
+	select {
 		display: block;
 	}
 </style>
@@ -27,19 +28,52 @@
 		initialize()
 	});
 	function submit() {
+		const sender = {
+			"name": {
+				"first": document.getElementById("sender-first-name").value,
+				"last": document.getElementById("sender-last-name").value,
+			},
+			"address": {
+				"city": document.getElementById("sender-city").value,
+				"countryCode": document.getElementById("sender-country-code").value,
+				"street": document.getElementById("sender-street").value,
+				"zipCode": document.getElementById("sender-zip-code").value,
+			},
+			"accountType": document.getElementById("sender-account-type").value,
+			"accountNumber": document.getElementById("sender-account-number").value,
+		}
+		const receiver = {
+			"name": {
+				"first": document.getElementById("receiver-first-name").value,
+				"last": document.getElementById("receiver-last-name").value,
+			},
+			"address": {
+				"city": document.getElementById("receiver-city").value,
+				"countryCode": document.getElementById("receiver-country-code").value,
+				"street": document.getElementById("receiver-street").value,
+				"zipCode": document.getElementById("receiver-zip-code").value,
+			},
+			"accountType": document.getElementById("receiver-account-type").value,
+			"accountNumber": document.getElementById("receiver-account-number").value,
+		}
+		const category = document.getElementById("category").value
 		authorization = {
 			"number": generateUnique(), // "Should be your unique authorization number"
 			"amount": Number(document.getElementById("amount").value),
-			"currency": "EUR",
+			"currency": document.getElementById("currency").value,
+			capture: document.getElementById("auto-capture").checked ? "auto" : undefined,
+			"category": category,
 			"card": {
 				"pan": document.getElementById("pan").value,
 				"expires": [
 					Number(document.getElementById("expires").value.split("/")[0]),
 					Number(document.getElementById("expires").value.split("/")[1])
 				],
-				"csc": document.getElementById("csc").value
+				"csc": document.getElementById("csc").value,
 			},
-			target: "https://merchant.igacq.com/v1/integration-example"
+			target: "https://merchant.igacq.com/v1/integration-example",
+			...((category == "account-to-account" || category == "person-to-person")
+				&& { sender, receiver: document.getElementById("same-receiver").checked ? sender : receiver })
 		}
 		authorize()
 	}
@@ -52,8 +86,8 @@
 	window.addEventListener("message", async e => {
 		if (e.data.destination == "parent" && e.data.content.name == "authorization") {
 			alert(e.data.content.value)
-			appendTobody("h1", "Created Authorization:")
-			appendTobody("p", e.data.content.value)
+			appendToBody("h1", "Created Authorization:")
+			appendToBody("p", e.data.content.value)
 		}
 	})
 </script>
@@ -73,8 +107,76 @@
 		<input type="text" id="csc" name="csc" value="987" />
 		<label for="expires">Expires</label>
 		<input type="text" id="expires" name="expires" placeholder="MM/YY" value="1/32" />
+		<input type="checkbox" id="auto-capture" name="auto-capture" checked />
+		<label for="auto-capture">Auto Capture</label><br />
+		<label for="category">Category</label>
+		<select id="category" name="category">
+			<option value="purchase">purchase</option>
+			<option value="withdrawal">withdrawal</option>
+			<option value="payout">payout</option>
+			<option value="account-to-account">account-to-account</option>
+			<option value="person-to-person">person-to-person</option>
+			<option value="topup">topup</option>
+			<option value="tip">tip</option>
+		</select>
+		<label for="currency">Currency</label>
+		<input type="text" id="currency" name="currency" value="EUR" />
 		<label for="amount">Amount</label>
 		<input type="text" id="amount" name="amount" value="250" />
+		<div id="sender-receiver" hidden>
+			<fieldset id="sender">
+				<legend>Sender</legend>
+				<label for="sender-first-name">First Name</label>
+				<input type="text" id="sender-first-name" name="sender-first-name" value="Jane" />
+				<label for="sender-last-name">Last Name</label>
+				<input type="text" id="sender-last-name" name="sender-last-name" value="Doe" />
+				<label for="sender-city">City</label>
+				<input type="text" id="sender-city" name="sender-city" value="Stockholm" />
+				<label for="sender-country-code">Country Code</label>
+				<input type="text" id="sender-country-code" name="sender-country-code" value="SE" />
+				<label for="sender-street">Street</label>
+				<input type="text" id="sender-street" name="sender-street" value="Hammarbyvägen 1" />
+				<label for="sender-zip-code">Zip Code</label>
+				<input type="text" id="sender-zip-code" name="sender-zip-code" value="75111" />
+				<label for="sender-account-type">Account Type</label>
+				<select id="sender-account-type" name="sender-account-type">
+					<option value="card">card</option>
+					<option value="bic">bic</option>
+					<option value="iban">iban</option>
+					<option value="cash">cash</option>
+					<option value="wallet">wallet</option>
+				</select>
+				<label for="sender-account-number">Account Number</label>
+				<input type="text" id="sender-account-number" name="sender-account-number" value="4111111111111111" />
+				<input type="checkbox" id="same-receiver" name="same-receiver" checked />
+				<label for="same-receiver">Same Receiver</label>
+			</fieldset>
+			<fieldset id="receiver" hidden>
+				<legend>Receiver</legend>
+				<label for="receiver-first-name">First Name</label>
+				<input type="text" id="receiver-first-name" name="receiver-first-name" value="Joe" />
+				<label for="receiver-last-name">Last Name</label>
+				<input type="text" id="receiver-last-name" name="receiver-last-name" value="Doe" />
+				<label for="receiver-city">City</label>
+				<input type="text" id="receiver-city" name="receiver-city" value="Uppsala" />
+				<label for="receiver-country-code">CountryCode</label>
+				<input type="text" id="receiver-country-code" name="receiver-country-code" value="SE" />
+				<label for="receiver-street">Street</label>
+				<input type="text" id="receiver-street" name="receiver-street" value="Rackarbergsgatan 2" />
+				<label for="receiver-zip-code">Zip Code</label>
+				<input type="text" id="receiver-zip-code" name="receiver-zip-code" value="75222" />
+				<label for="receiver-account-type">Account Type</label>
+				<select id="receiver-account-type" name="receiver-account-type">
+					<option value="iban">iban</option>
+					<option value="card">card</option>
+					<option value="bic">bic</option>
+					<option value="cash">cash</option>
+					<option value="wallet">wallet</option>
+				</select>
+				<label for="receiver-account-number">Account Number</label>
+				<input type="text" id="receiver-account-number" name="sender-account-number" value="IE12BOFI90000112345678" />
+			</fieldset>
+		</div>
 	</form>
 	<button onclick="submit()">Submit</button>
 	<iframe id="verification" name="verification"></iframe>

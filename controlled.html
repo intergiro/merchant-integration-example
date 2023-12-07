@@ -31,7 +31,7 @@
 			authorization = {
 				"number": generateUnique(), // "Should be your unique authorization number"
 				"amount": Number(document.getElementById("amount").value),
-				"currency": "EUR",
+				"currency": document.getElementById("currency").value,
 				"card": {
 					"pan": document.getElementById("pan").value,
 					"expires": [
@@ -119,6 +119,8 @@
 		<input type="text" id="csc" name="csc" value="987" />
 		<label for="expires">Expires</label>
 		<input type="text" id="expires" name="expires" placeholder="MM/YY" value="2/24" />
+		<label for="currency">Currency</label>
+		<input type="text" id="currency" name="currency" value="EUR" />
 		<label for="amount">Amount</label>
 		<input type="text" id="amount" name="amount" value="250" />
 	</form>
