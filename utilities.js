@@ -29,7 +29,7 @@ function initialize() {
 
 	document.getElementById("category").addEventListener("change", (event) => {
 		const senderReceiverDiv = document.querySelector("div#sender-receiver")
-		if (event.target.value == "account-to-account" || event.target.value == "person-to-person") {
+		if (event.target.value == "funding") {
 			senderReceiverDiv.hidden = false
 		} else {
 			senderReceiverDiv.hidden = true
