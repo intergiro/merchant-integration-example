@@ -72,7 +72,7 @@
 				"csc": document.getElementById("csc").value,
 			},
 			target: "https://merchant.igacq.com/v1/integration-example",
-			...(category == "funding"
+			...((category == "funding" || category == "payout")
 				&& { sender, receiver: document.getElementById("same-receiver").checked ? sender : receiver })
 		}
 		authorize()
