@@ -28,36 +28,47 @@
 		initialize()
 	});
 	function submit() {
-		const sender = {
-			"name": {
-				"first": document.getElementById("sender-first-name").value,
-				"last": document.getElementById("sender-last-name").value,
-			},
-			"address": {
-				"city": document.getElementById("sender-city").value,
-				"countryCode": document.getElementById("sender-country-code").value,
-				"street": document.getElementById("sender-street").value,
-				"zipCode": document.getElementById("sender-zip-code").value,
-			},
-			"accountType": document.getElementById("sender-account-type").value,
-			"accountNumber": document.getElementById("sender-account-number").value,
+		let sender = undefined
+		if (document.getElementById("add-sender").checked) {
+			sender = {
+				"name": {
+					"first": document.getElementById("sender-first-name").value,
+					"last": document.getElementById("sender-last-name").value,
+				},
+				"accountType": document.getElementById("sender-account-type").value,
+				"accountNumber": document.getElementById("sender-account-number").value,
+			}
+			if (document.getElementById("sender-add-address").checked) {
+				sender.address = {
+					"city": document.getElementById("sender-city").value,
+					"countryCode": document.getElementById("sender-country-code").value,
+					"street": document.getElementById("sender-street").value,
+					"zipCode": document.getElementById("sender-zip-code").value,
+					"stateOrProvince": document.getElementById("sender-state-or-province").value.replace("", undefined),
+				}
+			}
 		}
+
 		const receiver = {
 			"name": {
 				"first": document.getElementById("receiver-first-name").value,
 				"last": document.getElementById("receiver-last-name").value,
 			},
-			"address": {
+			"accountType": document.getElementById("receiver-account-type").value,
+			"accountNumber": document.getElementById("receiver-account-number").value,
+		}
+		if (document.getElementById("receiver-add-address").checked) {
+			receiver.address = {
 				"city": document.getElementById("receiver-city").value,
 				"countryCode": document.getElementById("receiver-country-code").value,
 				"street": document.getElementById("receiver-street").value,
 				"zipCode": document.getElementById("receiver-zip-code").value,
-			},
-			"accountType": document.getElementById("receiver-account-type").value,
-			"accountNumber": document.getElementById("receiver-account-number").value,
+				"stateOrProvince": document.getElementById("receiver-state-or-province").value,
+			}
 		}
+
 		const category = document.getElementById("category").value
-		authorization = {
+		authorization = replaceEmptyStrings({
 			"number": generateUnique(), // "Should be your unique authorization number"
 			"amount": Number(document.getElementById("amount").value),
 			"currency": document.getElementById("currency").value,
@@ -73,10 +84,27 @@
 			},
 			target: "https://merchant.igacq.com/v1/integration-example",
 			...((category == "funding" || category == "payout")
-				&& { sender, receiver: document.getElementById("same-receiver").checked ? sender : receiver })
-		}
+				&& { sender, receiver, type: document.getElementById("type").value }),
+		})
+
 		authorize()
 	}
+	function replaceEmptyStrings(value) {
+		if (typeof value !== "object" || value === null) {
+			return value;
+		}
+
+		for (const key in value) {
+			if (value[key] === "") {
+				value[key] = undefined;
+			} else if (typeof value[key] === "object" && value[key] !== null) {
+				value[key] = replaceEmptyStrings(value[key]);
+			}
+		}
+
+		return value;
+	}
+
 	async function authorize() {
 		const form = document.getElementById("iframePost")
 		form.input.value = JSON.stringify(authorization)
@@ -123,21 +151,65 @@
 		<label for="amount">Amount</label>
 		<input type="text" id="amount" name="amount" autocomplete="transaction-amount" value="250" />
 		<div id="sender-receiver" hidden>
-			<fieldset id="sender">
+			<label for="type">Type</label>
+			<select id="type" name="type" hidden>
+				<option value="person-to-person">person-to-person</option>
+				<option value=account-to-account>account-to-account</option>
+				<option value="general-funds-disbursement">general-funds-disbursement</option>
+			</select>
+
+			<fieldset id="receiver">
+				<legend>Receiver</legend>
+				<label for="receiver-first-name">First Name</label>
+				<input type="text" id="receiver-first-name" name="receiver-first-name" autocomplete="cc-given-name"
+					value="Joe" />
+				<label for="receiver-last-name">Last Name</label>
+				<input type="text" id="receiver-last-name" name="receiver-last-name" autocomplete="cc-family-name"
+					value="Doe" />
+
+				<label for="receiver-account-type">Account Type</label>
+				<select id="receiver-account-type" name="receiver-account-type">
+					<option value="iban">iban</option>
+					<option value="card">card</option>
+					<option value="bic">bic</option>
+					<option value="cash">cash</option>
+					<option value="wallet">wallet</option>
+				</select>
+				<label for="receiver-account-number">Account Number</label>
+				<input type="text" id="receiver-account-number" name="receiver-account-number"
+					value="IE12BOFI90000112345678" />
+
+				<input type="checkbox" id="receiver-add-address" name="receiver-add-address" />
+				<label for="receiver-add-address">Add address</label><br />
+				<div id="receiver-address" hidden>
+					<label for="receiver-city">City</label>
+					<input type="text" id="receiver-city" name="receiver-city" value="Stockholm" />
+					<label for="receiver-country-code">Country Code</label>
+					<input type="text" id="receiver-country-code" name="receiver-country-code" autocomplete="country"
+						value="SE" />
+					<label for="receiver-street">Street</label>
+					<input type="text" id="receiver-street" name="receiver-street" street-address="receiver-address"
+						value="Hammarbyvägen 1" />
+					<label for="receiver-zip-code">Zip Code</label>
+					<input type="text" id="receiver-zip-code" name="receiver-zip-code" autocomplete="postal-code"
+						value="75111" />
+					<label for="receiver-state-or-province">State or province</label>
+					<input type="text" id="receiver-state-or-province" name="receiver-state-or-province" />
+				</div>
+				<input type="checkbox" id="add-sender" name="add-sender" />
+				<label for="add-sender">Add Sender</label>
+			</fieldset>
+			</fieldset>
+			<fieldset id="sender" hidden>
 				<legend>Sender</legend>
 				<label for="sender-first-name">First Name</label>
-				<input type="text" id="sender-first-name" name="sender-first-name" autocomplete="cc-given-name" value="Jane" />
+				<input type="text" id="sender-first-name" name="sender-first-name" autocomplete="cc-given-name"
+					value="Jane" />
 				<label for="sender-last-name">Last Name</label>
-				<input type="text" id="sender-last-name" name="sender-last-name" autocomplete="cc-family-name" value="Doe" />
-				<label for="sender-city">City</label>
-				<input type="text" id="sender-city" name="sender-city" value="Stockholm" />
-				<label for="sender-country-code">Country Code</label>
-				<input type="text" id="sender-country-code" name="sender-country-code" autocomplete="country" value="SE" />
-				<label for="sender-street">Street</label>
-				<input type="text" id="sender-street" name="sender-street" street-address="street-address"
-					value="Hammarbyvägen 1" />
-				<label for="sender-zip-code">Zip Code</label>
-				<input type="text" id="sender-zip-code" name="sender-zip-code" autocomplete="postal-code" value="75111" />
+				<input type="text" id="sender-last-name" name="sender-last-name" autocomplete="cc-family-name"
+					value="Doe" />
+
+
 				<label for="sender-account-type">Account Type</label>
 				<select id="sender-account-type" name="sender-account-type">
 					<option value="card">card</option>
@@ -148,37 +220,25 @@
 				</select>
 				<label for="sender-account-number">Account Number</label>
 				<input type="text" id="sender-account-number" name="sender-account-number" value="4111111111111111" />
-				<input type="checkbox" id="same-receiver" name="same-receiver" checked />
-				<label for="same-receiver">Same Receiver</label>
-			</fieldset>
-			<fieldset id="receiver" hidden>
-				<legend>Receiver</legend>
-				<label for="receiver-first-name">First Name</label>
-				<input type="text" id="receiver-first-name" name="receiver-first-name" autocomplete="cc-given-name"
-					value="Joe" />
-				<label for="receiver-last-name">Last Name</label>
-				<input type="text" id="receiver-last-name" name="receiver-last-name" autocomplete="cc-family-name"
-					value="Doe" />
-				<label for="receiver-city">City</label>
-				<input type="text" id="receiver-city" name="receiver-city" value="Uppsala" />
-				<label for="receiver-country-code">Country Code</label>
-				<input type="text" id="receiver-country-code" name="receiver-country-code" autocomplete="country" value="SE" />
-				<label for="receiver-street">Street</label>
-				<input type="text" id="receiver-street" name="receiver-street" street-address="street-address"
-					value="Rackarbergsgatan 2" />
-				<label for="receiver-zip-code">Zip Code</label>
-				<input type="text" id="receiver-zip-code" name="receiver-zip-code" autocomplete="postal-code" value="75222" />
-				<label for="receiver-account-type">Account Type</label>
-				<select id="receiver-account-type" name="receiver-account-type">
-					<option value="iban">iban</option>
-					<option value="card">card</option>
-					<option value="bic">bic</option>
-					<option value="cash">cash</option>
-					<option value="wallet">wallet</option>
-				</select>
-				<label for="receiver-account-number">Account Number</label>
-				<input type="text" id="receiver-account-number" name="sender-account-number" value="IE12BOFI90000112345678" />
-			</fieldset>
+
+				<input type="checkbox" id="sender-add-address" name="sender-add-address" />
+				<label for="sender-add-address">Add address</label><br />
+				<div id="sender-address" hidden>
+					<label for="sender-city">City</label>
+					<input type="text" id="sender-city" name="sender-city" value="Stockholm" />
+					<label for="sender-country-code">Country Code</label>
+					<input type="text" id="sender-country-code" name="sender-country-code" autocomplete="country"
+						value="SE" />
+					<label for="sender-street">Street</label>
+					<input type="text" id="sender-street" name="sender-street" street-address="street-address"
+						value="Hammarbyvägen 1" />
+					<label for="sender-zip-code">Zip Code</label>
+					<input type="text" id="sender-zip-code" name="sender-zip-code" autocomplete="postal-code"
+						value="75111" />
+					<label for="sender-state-or-province">State or province</label>
+					<input type="text" id="sender-state-or-province" name="sender-state-or-province" />
+				</div>
+
 		</div>
 	</form>
 	<button onclick="submit()">Submit</button>
