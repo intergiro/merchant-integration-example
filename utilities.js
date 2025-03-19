@@ -36,9 +36,18 @@ function initialize() {
 		}
 	})
 
-	document.getElementById("same-receiver").addEventListener("change", (event) => {
-		const receiverFieldset = document.querySelector("fieldset#receiver")
-		receiverFieldset.hidden = event.target.checked
+	document.getElementById("sender-add-address").addEventListener("change", (event) => {
+		const addressDiv = document.querySelector("div#sender-address")
+		addressDiv.hidden = !event.target.checked
+	})
+	document.getElementById("receiver-add-address").addEventListener("change", (event) => {
+		const addressDiv = document.querySelector("div#receiver-address")
+		addressDiv.hidden = !event.target.checked
+	})
+
+	document.getElementById("add-sender").addEventListener("change", (event) => {
+		const senderFieldset = document.querySelector("fieldset#sender")
+		senderFieldset.hidden = !event.target.checked
 	})
 
 }
