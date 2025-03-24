@@ -44,7 +44,7 @@
 					"countryCode": document.getElementById("sender-country-code").value,
 					"street": document.getElementById("sender-street").value,
 					"zipCode": document.getElementById("sender-zip-code").value,
-					"stateOrProvince": document.getElementById("sender-state-or-province").value.replace("", undefined),
+					"stateOrProvince": document.getElementById("sender-state-or-province").value,
 				}
 			}
 		}
@@ -84,7 +84,7 @@
 			},
 			target: "https://merchant.igacq.com/v1/integration-example",
 			...((category == "funding" || category == "payout")
-				&& { sender, receiver, type: document.getElementById("type").value }),
+				&& { sender, receiver, type: document.getElementById("type").value, fundingSource: document.getElementById("fundingSource").value }),
 		})
 
 		authorize()
@@ -127,7 +127,7 @@
 		<input type="hidden" id="key" name="key"></input>
 	</form>
 	<form method="post">
-		<label for="key">Public API key</label>
+		<label for="key">API key</label>
 		<input type="text" id="api-key" name="key" />
 		<label for="pan">PAN</label>
 		<input type="text" id="pan" name="pan" autocomplete="cc-number" value="4111111111111111" />
@@ -157,7 +157,16 @@
 				<option value=account-to-account>account-to-account</option>
 				<option value="general-funds-disbursement">general-funds-disbursement</option>
 			</select>
-
+			<div id="funding-source" hidden>
+				<label for="fundingSource">FundingSource</label>
+				<select id="fundingSource" name="fundingSource" hidden>
+					<option value="credit">credit</option>
+					<option value=debit>debit</option>
+					<option value="prepaid">prepaid</option>
+					<option value="deposit-account">deposit-account</option>
+					<option value="mobile-money-account">mobile-money-account</option>
+				</select>
+			</div>
 			<fieldset id="receiver">
 				<legend>Receiver</legend>
 				<label for="receiver-first-name">First Name</label>
