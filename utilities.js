@@ -29,16 +29,25 @@ function initialize() {
 
 	document.getElementById("category").addEventListener("change", (event) => {
 		const senderReceiverDiv = document.querySelector("div#sender-receiver")
-		if (event.target.value == "funding" || event.target.value == "payout") {
-			senderReceiverDiv.hidden = false
-		} else {
-			senderReceiverDiv.hidden = true
-		}
+		const fundingSourceDiv = document.querySelector("div#funding-source")
+
+		fundingSourceDiv.hidden = event.target.value != "payout"
+		senderReceiverDiv.hidden = event.target.value != "funding" && event.target.value != "payout"
+	})
+	
+
+	document.getElementById("sender-add-address").addEventListener("change", (event) => {
+		const addressDiv = document.querySelector("div#sender-address")
+		addressDiv.hidden = !event.target.checked
+	})
+	document.getElementById("receiver-add-address").addEventListener("change", (event) => {
+		const addressDiv = document.querySelector("div#receiver-address")
+		addressDiv.hidden = !event.target.checked
 	})
 
-	document.getElementById("same-receiver").addEventListener("change", (event) => {
-		const receiverFieldset = document.querySelector("fieldset#receiver")
-		receiverFieldset.hidden = event.target.checked
+	document.getElementById("add-sender").addEventListener("change", (event) => {
+		const senderFieldset = document.querySelector("fieldset#sender")
+		senderFieldset.hidden = !event.target.checked
 	})
 
 }
